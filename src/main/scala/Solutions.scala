@@ -43,7 +43,11 @@ object Solutions {
     //    println("before: " + arr.mkString(","))
     //    nextPermutation(arr)
     //    println("after: " + arr.mkString(","))
-        println(isValid(""))
+    //    println(isValid(""))
+    //    println(search(Array(4, 5, 6, 0, 1, 2, 3), 2))
+    //    println(searchRange(Array(2, 2), 1).mkString(" "))
+    //    println(combinationSum(Array(2, 3, 6, 7), 7))
+    println(trap(Array(0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1)))
   }
 
   /*
@@ -848,4 +852,214 @@ lists[i].length 的总和不超过 10^4
     }
     maxValid
   }
+
+  /*
+  33. 搜索旋转排序数组
+给你一个升序排列的整数数组 nums ，和一个整数 target 。
+
+假设按照升序排序的数组在预先未知的某个点上进行了旋转。（例如，数组 [0,1,2,4,5,6,7] 可能变为 [4,5,6,7,0,1,2] ）。
+
+请你在数组中搜索 target ，如果数组中存在这个目标值，则返回它的索引，否则返回 -1 。
+
+
+示例 1：
+
+输入：nums = [4,5,6,7,0,1,2], target = 0
+输出：4
+示例 2：
+
+输入：nums = [4,5,6,7,0,1,2], target = 3
+输出：-1
+示例 3：
+
+输入：nums = [1], target = 0
+输出：-1
+
+
+提示：
+
+1 <= nums.length <= 5000
+-10^4 <= nums[i] <= 10^4
+nums 中的每个值都 独一无二
+nums 肯定会在某个点上旋转
+-10^4 <= target <= 10^
+   */
+  def search(nums: Array[Int], target: Int): Int = {
+    val len = nums.length
+    if (len == 0) {
+      return -1
+    } else if (len == 1) {
+      return if (nums(0) == target) 0 else -1
+    } else {
+      var head = 0
+      var tail = len - 1
+      while (head <= tail) {
+        val mid = (head + tail) / 2
+        if (nums(mid) == target) {
+          return mid
+        }
+        if (nums(0) <= nums(mid)) {
+          if (nums(0) <= target && target < nums(mid)) {
+            tail = mid - 1
+          } else {
+            head = mid + 1
+          }
+        } else {
+          if (nums(mid) < target && target <= nums(len - 1)) {
+            head = mid + 1
+          } else {
+            tail = mid - 1
+          }
+        }
+      }
+      -1
+    }
+  }
+
+  /*
+  34. 在排序数组中查找元素的第一个和最后一个位置
+给定一个按照升序排列的整数数组 nums，和一个目标值 target。找出给定目标值在数组中的开始位置和结束位置。
+
+你的算法时间复杂度必须是 O(log n) 级别。
+
+如果数组中不存在目标值，返回 [-1, -1]。
+
+示例 1:
+
+输入: nums = [5,7,7,8,8,10], target = 8
+输出: [3,4]
+示例 2:
+
+输入: nums = [5,7,7,8,8,10], target = 6
+输出: [-1,-1]
+   */
+  def searchRange(nums: Array[Int], target: Int): Array[Int] = {
+    val len = nums.length
+    if (len == 0)
+      return Array(-1, -1)
+    if (len == 1) {
+      return if (nums(0) == target) Array(0, 0) else Array(-1, -1)
+    }
+    if (target < nums(0) || target > nums(len - 1)) {
+      return Array(-1, -1)
+    }
+    var head = 0
+    var tail = len - 1
+    while (head <= tail) {
+      val mid = (head + tail) / 2
+      if (nums(mid) < target) {
+        head = mid + 1
+      }
+
+      if (nums(mid) > target) {
+        tail = mid - 1
+      }
+
+      if (nums(head) < target) {
+        head += 1
+      } else if (nums(tail) > target) {
+        tail -= 1
+      } else {
+        if (target == nums(head) && target == nums(tail)) {
+          return Array(head, tail)
+        }
+      }
+    }
+    Array(-1, -1)
+  }
+
+  /*
+  39. 组合总和
+给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+
+candidates 中的数字可以无限制重复被选取。
+
+说明：
+
+所有数字（包括 target）都是正整数。
+解集不能包含重复的组合。
+示例 1：
+
+输入：candidates = [2,3,6,7], target = 7,
+所求解集为：
+[
+  [7],
+  [2,2,3]
+]
+示例 2：
+
+输入：candidates = [2,3,5], target = 8,
+所求解集为：
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+
+
+提示：
+
+1 <= candidates.length <= 30
+1 <= candidates[i] <= 200
+candidate 中的每个元素都是独一无二的。
+1 <= target <= 500
+   */
+
+  import scala.collection.mutable.ListBuffer
+
+  def combinationSum(candidates: Array[Int], target: Int): List[List[Int]] = {
+    val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
+    dfs(candidates, target, List(), 0, buffer)
+    buffer.toList
+  }
+
+  def dfs(candidates: Array[Int], target: Int, combine: List[Int], idx: Int, buffer: ListBuffer[List[Int]]) {
+    // 选 idx元素
+    val temp = target - candidates(idx)
+    if (temp == 0) {
+      buffer.append(combine.::(candidates(idx)))
+    } else if (temp > 0) {
+      dfs(candidates, temp, combine.::(candidates(idx)), idx, buffer)
+    }
+    if (idx + 1 < candidates.length) {
+      dfs(candidates, target, combine, idx + 1, buffer)
+    }
+  }
+
+  /*
+  42. 接雨水
+给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+
+
+上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 感谢 Marcos 贡献此图。
+
+示例:
+
+输入: [0,1,0,2,1,0,1,3,2,1,2,1]
+输出: 6
+   */
+  def trap(height: Array[Int]): Int = {
+    if (height.isEmpty)
+      return 0
+    val len = height.length
+    val leftMaxArr: Array[Int] = new Array[Int](len)
+    val rightMaxArr: Array[Int] = new Array[Int](len)
+
+    leftMaxArr(0) = height(0)
+    rightMaxArr(len-1) = height(len-1)
+
+    for (i <- 1 until len) {
+      leftMaxArr(i) = Math.max(leftMaxArr(i-1), height(i))
+      rightMaxArr(len-i-1) = Math.max(height(len-i-1), rightMaxArr(len-i))
+    }
+
+    var sum = 0
+    for (i <- 0 until len) {
+      sum += Math.min(leftMaxArr(i), rightMaxArr(i)) - height(i)
+    }
+
+    sum
+  }
+
 }
