@@ -47,7 +47,8 @@ object Solutions {
     //    println(search(Array(4, 5, 6, 0, 1, 2, 3), 2))
     //    println(searchRange(Array(2, 2), 1).mkString(" "))
     //    println(combinationSum(Array(2, 3, 6, 7), 7))
-    println(trap(Array(0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1)))
+    //    println(trap(Array(0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1)))
+    println(permute(Array(1, 2, 3)))
   }
 
   /*
@@ -1047,11 +1048,11 @@ candidate 中的每个元素都是独一无二的。
     val rightMaxArr: Array[Int] = new Array[Int](len)
 
     leftMaxArr(0) = height(0)
-    rightMaxArr(len-1) = height(len-1)
+    rightMaxArr(len - 1) = height(len - 1)
 
     for (i <- 1 until len) {
-      leftMaxArr(i) = Math.max(leftMaxArr(i-1), height(i))
-      rightMaxArr(len-i-1) = Math.max(height(len-i-1), rightMaxArr(len-i))
+      leftMaxArr(i) = Math.max(leftMaxArr(i - 1), height(i))
+      rightMaxArr(len - i - 1) = Math.max(height(len - i - 1), rightMaxArr(len - i))
     }
 
     var sum = 0
@@ -1060,6 +1061,51 @@ candidate 中的每个元素都是独一无二的。
     }
 
     sum
+  }
+
+  /*
+    46. 全排列
+  给定一个 没有重复 数字的序列，返回其所有可能的全排列。
+
+  示例:
+
+  输入: [1,2,3]
+  输出:
+  [
+    [1,2,3],
+    [1,3,2],
+    [2,1,3],
+    [2,3,1],
+    [3,1,2],
+    [3,2,1]
+  ]
+     */
+  def permute(nums: Array[Int]): List[List[Int]] = {
+    val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
+    val len = nums.length
+    if (len == 0) {
+      return List[List[Int]]()
+    }
+    val list: ListBuffer[Int] = new ListBuffer[Int]()
+    val used: Array[Boolean] = new Array[Boolean](len)
+
+    dfs(nums, 0, list, used, buffer)
+    buffer.toList
+  }
+
+  def dfs(nums: Array[Int], depth: Int, list: ListBuffer[Int], used: Array[Boolean], buffer: ListBuffer[List[Int]]): Unit = {
+    if (depth == nums.length) {
+      buffer.append(list.toList)
+    }
+    for (i <- 0 until used.length) {
+      if (!used(i)) {
+        used(i) = true
+        list.append(nums(i))
+        dfs(nums, depth + 1, list, used, buffer)
+        list.remove(list.length - 1)
+        used(i) = false
+      }
+    }
   }
 
 }
