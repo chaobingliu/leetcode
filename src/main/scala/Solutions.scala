@@ -1,4 +1,3 @@
-
 object Solutions {
   def main(args: Array[String]): Unit = {
     //    println("abc".last)
@@ -48,7 +47,24 @@ object Solutions {
     //    println(searchRange(Array(2, 2), 1).mkString(" "))
     //    println(combinationSum(Array(2, 3, 6, 7), 7))
     //    println(trap(Array(0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1)))
-    println(permute(Array(1, 2, 3)))
+    //    println(permute(Array(1, 2, 3)))
+    //    val t = Array.ofDim[Int](3, 3)
+    //    t(0)(0) = 1
+    //    t(0)(1) = 2
+    //    t(0)(2) = 3
+    //    t(1)(0) = 4
+    //    t(1)(1) = 5
+    //    t(1)(2) = 6
+    //    t(2)(0) = 7
+    //    t(2)(1) = 8
+    //    t(2)(2) = 9
+    //    rotate(t)
+    //    for (i <- 0 until t.length) {
+    //      println(t(i).mkString(" "))
+    //
+    //    }
+    //    println(groupAnagrams(Array("eat", "tea", "tan", "ate", "nat", "bat")))
+    println(maxSubArray(Array(-2, 1, -3, 4, -1, 2, 1, -5, 4)))
   }
 
   /*
@@ -1094,8 +1110,12 @@ candidate 中的每个元素都是独一无二的。
   }
 
   def dfs(nums: Array[Int], depth: Int, list: ListBuffer[Int], used: Array[Boolean], buffer: ListBuffer[List[Int]]): Unit = {
+    println(depth)
+    println(nums.length)
+    println(depth == nums.length)
     if (depth == nums.length) {
       buffer.append(list.toList)
+      return
     }
     for (i <- 0 until used.length) {
       if (!used(i)) {
@@ -1106,6 +1126,128 @@ candidate 中的每个元素都是独一无二的。
         used(i) = false
       }
     }
+  }
+
+  /*
+  48. 旋转图像
+给定一个 n × n 的二维矩阵表示一个图像。
+
+将图像顺时针旋转 90 度。
+
+说明：
+
+你必须在原地旋转图像，这意味着你需要直接修改输入的二维矩阵。请不要使用另一个矩阵来旋转图像。
+
+示例 1:
+
+给定 matrix =
+[
+  [1,2,3],
+  [4,5,6],
+  [7,8,9]
+],
+
+原地旋转输入矩阵，使其变为:
+[
+  [7,4,1],
+  [8,5,2],
+  [9,6,3]
+]
+示例 2:
+
+给定 matrix =
+[
+  [ 5, 1, 9,11],
+  [ 2, 4, 8,10],
+  [13, 3, 6, 7],
+  [15,14,12,16]
+],
+
+原地旋转输入矩阵，使其变为:
+[
+  [15,13, 2, 5],
+  [14, 3, 4, 1],
+  [12, 6, 8, 9],
+  [16, 7,10,11]
+]
+   */
+  def rotate(matrix: Array[Array[Int]]): Unit = {
+    val len = matrix.length - 1
+    for (i <- 0 until (len + 2) / 2) {
+      for (j <- 0 until (len + 1) / 2) {
+        val temp = matrix(i)(j)
+        matrix(i)(j) = matrix(len - j)(i)
+        matrix(len - j)(i) = matrix(len - i)(len - j)
+        matrix(len - i)(len - j) = matrix(j)(len - i)
+        matrix(j)(len - i) = temp
+      }
+    }
+  }
+
+  /*
+  49. 字母异位词分组
+给定一个字符串数组，将字母异位词组合在一起。字母异位词指字母相同，但排列不同的字符串。
+
+示例:
+
+输入: ["eat", "tea", "tan", "ate", "nat", "bat"]
+输出:
+[
+  ["ate","eat","tea"],
+  ["nat","tan"],
+  ["bat"]
+]
+说明：
+
+所有输入均为小写字母。
+不考虑答案输出的顺序。
+   */
+  def groupAnagrams(strs: Array[String]): List[List[String]] = {
+    val len = strs.length
+    if (len == 0) {
+      return List[List[String]]()
+    }
+    import scala.collection.mutable.ListBuffer
+    import scala.collection.mutable
+    val buffer: ListBuffer[List[String]] = new ListBuffer[List[String]]()
+    val map: mutable.Map[String, List[String]] = mutable.Map[String, List[String]]()
+
+    for (str <- strs) {
+      val temp = str.sorted
+      if (map.contains(temp)) {
+        map.put(temp, map.get(temp).get.::(str))
+      } else {
+        map.put(temp, List(str))
+      }
+    }
+    map.values.map(buffer.append(_))
+    buffer.toList
+  }
+
+  /*
+  53. 最大子序和
+给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+
+示例:
+
+输入: [-2,1,-3,4,-1,2,1,-5,4]
+输出: 6
+解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+进阶:
+
+如果你已经实现复杂度为 O(n) 的解法，尝试使用更为精妙的分治法求解。
+   */
+  def maxSubArray(nums: Array[Int]): Int = {
+    if (nums.isEmpty)
+      return 0
+    val arr: Array[Int] = new Array[Int](nums.length)
+    arr(0) = nums(0)
+    var maxStrs = nums(0)
+    for (i <- 1 until arr.length) {
+      arr(i) = Math.max(arr(i - 1) + nums(i), nums(i))
+      maxStrs = if (maxStrs < arr(i)) arr(i) else maxStrs
+    }
+    maxStrs
   }
 
 }
