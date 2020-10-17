@@ -1,3 +1,5 @@
+import scala.util.control.Breaks
+
 object Solutions {
   def main(args: Array[String]): Unit = {
     //    println("abc".last)
@@ -65,14 +67,22 @@ object Solutions {
     //    }
     //    println(groupAnagrams(Array("eat", "tea", "tan", "ate", "nat", "bat")))
     //    println(maxSubArray(Array(-2, 1, -3, 4, -1, 2, 1, -5, 4)))
-    println(canJump(Array(1))) // true
-    println(canJump(Array(0))) // true
-    println(canJump(Array(2, 0))) // true
-    println(canJump(Array(3, 2, 1, 0, 4))) // false
-    println(canJump(Array(1, 2))) // true
-    println(canJump(Array(3, 2, 1, 0, 4))) // false
-    println(canJump(Array(0, 2, 3))) // false
-    println(canJump(Array(2, 0, 0))) // true
+    //    println(canJump(Array(1))) // true
+    //    println(canJump(Array(0))) // true
+    //    println(canJump(Array(2, 0))) // true
+    //    println(canJump(Array(3, 2, 1, 0, 4))) // false
+    //    println(canJump(Array(1, 2))) // true
+    //    println(canJump(Array(3, 2, 1, 0, 4))) // false
+    //    println(canJump(Array(0, 2, 3))) // false
+    //    println(canJump(Array(2, 0, 0))) // true
+    //[[1,3],[2,6],[8,10],[15,18]]
+    //    merge(Array(Array(1,3), Array(2,6), Array(8,10), Array(15,18)))
+    //    val t = merge(Array(Array(2, 3), Array(4, 5), Array(6, 7), Array(8, 9), Array(1, 10)))
+    //    for (a <- t) {
+    //      println(a.mkString(" "))
+    //    }
+//    println(uniquePaths(3, 7))
+    println(minPathSum(Array(Array(1,3,1), Array(1,5,1), Array(4,2,1))))
   }
 
   /*
@@ -1118,9 +1128,6 @@ candidate 中的每个元素都是独一无二的。
   }
 
   def dfs(nums: Array[Int], depth: Int, list: ListBuffer[Int], used: Array[Boolean], buffer: ListBuffer[List[Int]]): Unit = {
-    println(depth)
-    println(nums.length)
-    println(depth == nums.length)
     if (depth == nums.length) {
       buffer.append(list.toList)
       return
@@ -1298,4 +1305,132 @@ candidate 中的每个元素都是独一无二的。
     }
     false
   }
+
+  /*
+  56. 合并区间
+给出一个区间的集合，请合并所有重叠的区间。
+
+
+
+示例 1:
+
+输入: intervals = [[1,3],[2,6],[8,10],[15,18]]
+输出: [[1,6],[8,10],[15,18]]
+解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+示例 2:
+
+输入: intervals = [[1,4],[4,5]]
+输出: [[1,5]]
+解释: 区间 [1,4] 和 [4,5] 可被视为重叠区间。
+注意：输入类型已于2019年4月15日更改。 请重置默认代码定义以获取新方法签名。
+
+
+
+提示：
+
+intervals[i][0] <= intervals[i][1]
+   */
+  def merge(intervals: Array[Array[Int]]): Array[Array[Int]] = {
+    import scala.collection.mutable.ListBuffer
+    import scala.util.control.Breaks
+    val buffer: ListBuffer[Array[Int]] = new ListBuffer[Array[Int]]()
+    val loop = new Breaks
+    val ccc = intervals.sortWith((A, B) => A(0) < B(0))
+    for (arr <- ccc) {
+      if (buffer.isEmpty) {
+        buffer.append(arr)
+      } else {
+        loop.breakable {
+          for (t <- buffer) {
+            if ((arr(0) >= t(0) && arr(0) <= t(1)) || (arr(1) >= t(0) && arr(1) <= t(1)) || (arr(0) < t(0) && arr(1) > t(1))) {
+              t(0) = Math.min(t(0), arr(0))
+              t(1) = Math.max(t(1), arr(1))
+              loop.break()
+            }
+          }
+          buffer.append(arr)
+        }
+      }
+    }
+    buffer.toArray
+  }
+
+  /*
+  62. 不同路径
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+
+问总共有多少条不同的路径？
+
+
+
+例如，上图是一个7 x 3 的网格。有多少可能的路径？
+
+
+
+示例 1:
+
+输入: m = 3, n = 2
+输出: 3
+解释:
+从左上角开始，总共有 3 条路径可以到达右下角。
+1. 向右 -> 向右 -> 向下
+2. 向右 -> 向下 -> 向右
+3. 向下 -> 向右 -> 向右
+示例 2:
+
+输入: m = 7, n = 3
+输出: 28
+   */
+  def uniquePaths(m: Int, n: Int): Int = {
+    val dp = Array.ofDim[Int](m, n)
+    for (i <- 0 until m) {
+      dp(i)(0) = 1
+    }
+
+    for (j <- 0 until n) {
+      dp(0)(j) = 1
+    }
+    for (i <- 1 until m; j <- 1 until n) {
+      dp(i)(j) = dp(i - 1)(j) + dp(i)(j - 1)
+    }
+    dp(m - 1)(n - 1)
+  }
+
+  /*
+  64. 最小路径和
+ 给定一个包含非负整数的 m x n 网格，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+
+ 说明：每次只能向下或者向右移动一步。
+
+ 示例:
+
+ 输入:
+ [
+   [1,3,1],
+   [1,5,1],
+   [4,2,1]
+ ]
+ 输出: 7
+ 解释: 因为路径 1→3→1→1→1 的总和最小。
+   */
+  def minPathSum(grid: Array[Array[Int]]): Int = {
+    val row = grid.length
+    val cel = grid(0).length
+    val dp = Array.ofDim[Int](row, cel)
+    dp(0)(0) = grid(0)(0)
+    for (i <- 1 until row) {
+      dp(i)(0) = dp(i-1)(0) + grid(i)(0)
+    }
+    for (j <- 1 until cel) {
+      dp(0)(j) = dp(0)(j-1) + grid(0)(j)
+    }
+    for(i <- 1 until row; j <- 1 until cel) {
+      dp(i)(j) = Math.min(dp(i-1)(j), dp(i)(j-1))+grid(i)(j)
+    }
+    dp(row-1)(cel-1)
+  }
+
+
 }
