@@ -64,7 +64,15 @@ object Solutions {
     //
     //    }
     //    println(groupAnagrams(Array("eat", "tea", "tan", "ate", "nat", "bat")))
-    println(maxSubArray(Array(-2, 1, -3, 4, -1, 2, 1, -5, 4)))
+    //    println(maxSubArray(Array(-2, 1, -3, 4, -1, 2, 1, -5, 4)))
+    println(canJump(Array(1))) // true
+    println(canJump(Array(0))) // true
+    println(canJump(Array(2, 0))) // true
+    println(canJump(Array(3, 2, 1, 0, 4))) // false
+    println(canJump(Array(1, 2))) // true
+    println(canJump(Array(3, 2, 1, 0, 4))) // false
+    println(canJump(Array(0, 2, 3))) // false
+    println(canJump(Array(2, 0, 0))) // true
   }
 
   /*
@@ -1250,4 +1258,44 @@ candidate 中的每个元素都是独一无二的。
     maxStrs
   }
 
+  /*
+  55. 跳跃游戏
+ 给定一个非负整数数组，你最初位于数组的第一个位置。
+
+ 数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+ 判断你是否能够到达最后一个位置。
+
+ 示例 1:
+
+ 输入: [2,3,1,1,4]
+ 输出: true
+ 解释: 我们可以先跳 1 步，从位置 0 到达 位置 1, 然后再从位置 1 跳 3 步到达最后一个位置。
+ 示例 2:
+
+ 输入: [3,2,1,0,4]
+ 输出: false
+ 解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+   */
+  def canJump(nums: Array[Int]): Boolean = {
+    if (nums.length <= 1) {
+      return true
+    }
+    if (nums(0) == 0) {
+      return false
+    }
+    val arr: Array[Int] = new Array[Int](nums.length)
+    arr(0) = nums(0)
+    var maxIdx = nums(0)
+    for (i <- 0 until nums.length - 1) {
+      arr(i) = i + nums(i)
+      maxIdx = if (maxIdx < arr(i)) arr(i) else maxIdx
+      if (nums(i) == 0 && maxIdx <= i)
+        return false
+      if (arr(i) >= nums.length - 1) {
+        return true
+      }
+    }
+    false
+  }
 }
