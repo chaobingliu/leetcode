@@ -81,9 +81,14 @@ object Solutions {
     //    for (a <- t) {
     //      println(a.mkString(" "))
     //    }
-//    println(uniquePaths(3, 7))
-//    println(minPathSum(Array(Array(1,3,1), Array(1,5,1), Array(4,2,1))))
-    println(climbStairs(3))
+    //    println(uniquePaths(3, 7))
+    //    println(minPathSum(Array(Array(1,3,1), Array(1,5,1), Array(4,2,1))))
+    //    println(climbStairs(3))
+//    println(minDistance("horse", "ros"))
+    val arr =Array(1,0)
+    sortColors(arr)
+    println(arr.mkString(" "))
+
   }
 
   /*
@@ -1422,15 +1427,15 @@ intervals[i][0] <= intervals[i][1]
     val dp = Array.ofDim[Int](row, cel)
     dp(0)(0) = grid(0)(0)
     for (i <- 1 until row) {
-      dp(i)(0) = dp(i-1)(0) + grid(i)(0)
+      dp(i)(0) = dp(i - 1)(0) + grid(i)(0)
     }
     for (j <- 1 until cel) {
-      dp(0)(j) = dp(0)(j-1) + grid(0)(j)
+      dp(0)(j) = dp(0)(j - 1) + grid(0)(j)
     }
-    for(i <- 1 until row; j <- 1 until cel) {
-      dp(i)(j) = Math.min(dp(i-1)(j), dp(i)(j-1))+grid(i)(j)
+    for (i <- 1 until row; j <- 1 until cel) {
+      dp(i)(j) = Math.min(dp(i - 1)(j), dp(i)(j - 1)) + grid(i)(j)
     }
-    dp(row-1)(cel-1)
+    dp(row - 1)(cel - 1)
   }
 
   /*
@@ -1464,9 +1469,102 @@ intervals[i][0] <= intervals[i][1]
     dp(0) = 1
     dp(1) = 2
     for (i <- 2 until n) {
-      dp(i) = dp(i-1) + dp(i-2)
+      dp(i) = dp(i - 1) + dp(i - 2)
     }
-    dp(n-1)
+    dp(n - 1)
   }
 
+  /*
+  72. 编辑距离
+给你两个单词 word1 和 word2，请你计算出将 word1 转换成 word2 所使用的最少操作数 。
+
+你可以对一个单词进行如下三种操作：
+
+插入一个字符
+删除一个字符
+替换一个字符
+
+
+示例 1：
+
+输入：word1 = "horse", word2 = "ros"
+输出：3
+解释：
+horse -> rorse (将 'h' 替换为 'r')
+rorse -> rose (删除 'r')
+rose -> ros (删除 'e')
+示例 2：
+
+输入：word1 = "intention", word2 = "execution"
+输出：5
+解释：
+intention -> inention (删除 't')
+inention -> enention (将 'i' 替换为 'e')
+enention -> exention (将 'n' 替换为 'x')
+exention -> exection (将 'n' 替换为 'c')
+exection -> execution (插入 'u')
+   */
+  def minDistance(word1: String, word2: String): Int = {
+    val m = word1.length
+    val n = word2.length
+    val dp = Array.ofDim[Int](m + 1, n + 1)
+    for (i <- 0 to m) {
+      dp(i)(0) = i
+    }
+    for (j <- 0 to n) {
+      dp(0)(j) = j
+    }
+    for (i <- 1 to m; j <- 1 to n) {
+      if (word1.charAt(i-1) == word2.charAt(j-1)) {
+        dp(i)(j) = dp(i - 1)(j - 1)
+      } else {
+        val A = dp(i - 1)(j) // 在第二个字符串中添加一个字符，使dp(i)(j)个字符串相同，将其抵消
+        val B = dp(i)(j - 1) // 在第一个字符串中添加一个字符，使dp(i)(j)个字符串相同，将其抵消
+        val C = dp(i - 1)(j - 1) // 在第一个字符串中替换一个字符，使dp(i)(j)个字符串相同，将其抵消
+        dp(i)(j) = Math.min(A, Math.min(B, C)) + 1
+      }
+    }
+    dp(m)(n)
+  }
+
+  /*
+  75. 颜色分类
+给定一个包含红色、白色和蓝色，一共 n 个元素的数组，原地对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。
+
+此题中，我们使用整数 0、 1 和 2 分别表示红色、白色和蓝色。
+
+注意:
+不能使用代码库中的排序函数来解决这道题。
+
+示例:
+
+输入: [2,0,2,1,1,0]
+输出: [0,0,1,1,2,2]
+进阶：
+
+一个直观的解决方案是使用计数排序的两趟扫描算法。
+首先，迭代计算出0、1 和 2 元素的个数，然后按照0、1、2的排序，重写当前数组。
+你能想出一个仅使用常数空间的一趟扫描算法吗？
+   */
+  def sortColors(nums: Array[Int]): Unit = {
+    var p0 = 0
+    var p1 = 0
+    for (i <- 0 until nums.length) {
+      if (nums(i) == 0) {
+        nums(i) = nums(p0)
+        nums(p0) = 0
+        if (p0 < p1) {
+          val temp = nums(p1)
+          nums(p1) = nums(i)
+          nums(i) = temp
+        }
+        p0 += 1
+        p1 += 1
+      } else if (nums(i) == 1) {
+        nums(i) = nums(p1)
+        nums(p1) = 1
+        p1 += 1
+      }
+    }
+  }
 }
