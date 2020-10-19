@@ -92,7 +92,7 @@ object Solutions {
     //    subsets(Array(1, 2, 3))
     //    println(minWindow("ADOBECODEBANC", "ABC"))
     //    println(exist(Array(Array('A', 'B', 'C', 'E'), Array('S', 'F', 'C', 'S'), Array('A', 'D', 'E', 'E')), "SEE"))
-    println(largestRectangleArea(Array(3, 6, 5, 7, 4, 8, 1, 0)))
+    println(largestRectangleArea(Array(2,1,5,5,2,3)))
 
   }
 
