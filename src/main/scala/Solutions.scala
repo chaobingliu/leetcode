@@ -1,4 +1,4 @@
-import scala.util.control.Breaks
+
 
 object Solutions {
   def main(args: Array[String]): Unit = {
@@ -49,7 +49,7 @@ object Solutions {
     //    println(searchRange(Array(2, 2), 1).mkString(" "))
     //    println(combinationSum(Array(2, 3, 6, 7), 7))
     //    println(trap(Array(0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1)))
-    //    println(permute(Array(1, 2, 3)))
+    //        println(permute(Array(1, 2, 3)))
     //    val t = Array.ofDim[Int](3, 3)
     //    t(0)(0) = 1
     //    t(0)(1) = 2
@@ -84,10 +84,13 @@ object Solutions {
     //    println(uniquePaths(3, 7))
     //    println(minPathSum(Array(Array(1,3,1), Array(1,5,1), Array(4,2,1))))
     //    println(climbStairs(3))
-//    println(minDistance("horse", "ros"))
-    val arr =Array(1,0)
-    sortColors(arr)
-    println(arr.mkString(" "))
+    //    println(minDistance("horse", "ros"))
+    //    val arr =Array(1,0)
+    //    sortColors(arr)
+    //    println(arr.mkString(" "))
+    //    minWindow("ADOBECODEBANC", "ABC")
+    //    subsets(Array(1, 2, 3))
+    println(minWindow("ADOBECODEBANC", "ABC"))
 
   }
 
@@ -1228,8 +1231,8 @@ candidate 中的每个元素都是独一无二的。
     if (len == 0) {
       return List[List[String]]()
     }
-    import scala.collection.mutable.ListBuffer
     import scala.collection.mutable
+    import scala.collection.mutable.ListBuffer
     val buffer: ListBuffer[List[String]] = new ListBuffer[List[String]]()
     val map: mutable.Map[String, List[String]] = mutable.Map[String, List[String]]()
 
@@ -1515,7 +1518,7 @@ exection -> execution (插入 'u')
       dp(0)(j) = j
     }
     for (i <- 1 to m; j <- 1 to n) {
-      if (word1.charAt(i-1) == word2.charAt(j-1)) {
+      if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
         dp(i)(j) = dp(i - 1)(j - 1)
       } else {
         val A = dp(i - 1)(j) // 在第二个字符串中添加一个字符，使dp(i)(j)个字符串相同，将其抵消
@@ -1565,6 +1568,106 @@ exection -> execution (插入 'u')
         nums(p1) = 1
         p1 += 1
       }
+    }
+  }
+
+
+  /*
+    76. 最小覆盖子串
+  给你一个字符串 S、一个字符串 T 。请你设计一种算法，可以在 O(n) 的时间复杂度内，从字符串 S 里面找出：包含 T 所有字符的最小子串。
+
+
+
+  示例：
+
+  输入：S = "ADOBECODEBANC", T = "ABC"
+  输出："BANC"
+
+
+  提示：
+
+  如果 S 中不存这样的子串，则返回空字符串 ""。
+  如果 S 中存在这样的子串，我们保证它是唯一的答案。
+     */
+  def minWindow(s: String, t: String): String = {
+    val sLen = s.length
+    val tLen = t.length
+
+    var left, right = 0
+
+    val tArr = new Array[Int](128)
+    val sArr = new Array[Int](128)
+    for (c <- t) {
+      tArr(c) += 1
+    }
+
+    var minLen = Int.MaxValue
+    var minStr = ""
+
+    var distance = 0
+    while (right < sLen) {
+      val sc = s.charAt(right)
+      if (tArr(sc) > 0) {
+        if (sArr(sc) < tArr(sc)) {
+          distance += 1
+        }
+        sArr(sc) += 1
+
+        while (distance == tLen) {
+          val tempC = s.charAt(left)
+          if (tArr(tempC) > 0 && tArr(tempC) == sArr(tempC)) {
+            if (minLen > (right - left + 1)) {
+              minLen = right - left + 1
+              minStr = s.substring(left, right + 1)
+            }
+            distance -= 1
+          }
+          left += 1
+          sArr(tempC) -= 1
+        }
+        right += 1
+      } else {
+        right += 1
+      }
+    }
+    minStr
+  }
+
+  /*
+  78. 子集
+给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+
+说明：解集不能包含重复的子集。
+
+示例:
+
+输入: nums = [1,2,3]
+输出:
+[
+  [3],
+  [1],
+  [2],
+  [1,2,3],
+  [1,3],
+  [2,3],
+  [1,2],
+  []
+]
+   */
+  def subsets(nums: Array[Int]): List[List[Int]] = {
+    val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
+    backtrack(nums, buffer, new ListBuffer[Int](), 0)
+    buffer.toList
+  }
+
+  def backtrack(nums: Array[Int], buffer: ListBuffer[List[Int]], list: ListBuffer[Int], start: Int): Unit = {
+    buffer.append(list.toList)
+
+    for (i <- start until nums.length) {
+      list.append(nums(i))
+      backtrack(nums, buffer, list, i + 1)
+      list.remove(list.length - 1)
+
     }
   }
 }
