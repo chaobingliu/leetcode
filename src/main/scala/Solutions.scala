@@ -1769,28 +1769,30 @@ board 和 word 中只包含大写和小写英文字母。
 输出: 10
    */
   def largestRectangleArea(heights: Array[Int]): Int = {
-    if (heights.length == 0)
+    var len = heights.length
+    if (len == 0)
       return 0
-    if (heights.length == 1)
+    if (len == 1)
       return heights(0)
 
     import scala.collection.mutable
     val stack: mutable.Stack[Int] = new mutable.Stack[Int]()
     var max = 0
 
-    for (i <- 0 until heights.length) {
-      while (!stack.isEmpty && heights(stack.top) > heights(i)) {
+    val newHeights = new Array[Int](len + 2)
+    for (i <- 1 to len) {
+      newHeights(i) = heights(i - 1)
+    }
+    len += 2
+
+    stack.push(0)
+    for (i <- 1 until len) {
+      while (newHeights(stack.top) > newHeights(i)) {
         val popIdx = stack.pop
         val width = if (stack.isEmpty) i else (i - stack.top - 1)
-        max = Math.max(max, heights(popIdx) * width)
+        max = Math.max(max, newHeights(popIdx) * width)
       }
       stack.push(i)
-    }
-
-    while (!stack.isEmpty) {
-      val popIdx = stack.pop()
-      val width = if (stack.isEmpty) heights.length else (heights.length - stack.top - 1)
-      max = Math.max(max, heights(popIdx) * width)
     }
     max
   }
