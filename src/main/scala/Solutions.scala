@@ -92,7 +92,7 @@ object Solutions {
     //    subsets(Array(1, 2, 3))
     //    println(minWindow("ADOBECODEBANC", "ABC"))
     //    println(exist(Array(Array('A', 'B', 'C', 'E'), Array('S', 'F', 'C', 'S'), Array('A', 'D', 'E', 'E')), "SEE"))
-    println(largestRectangleArea(Array(2,1,5,5,2,3)))
+    println(largestRectangleArea(Array(2, 1, 5, 5, 2, 3)))
 
   }
 
@@ -1718,14 +1718,15 @@ board 和 word 中只包含大写和小写英文字母。
         return true
       }
     }
-    return false
+    false
   }
 
   def dfs(board: Array[Array[Char]], rowIdx: Int, colIdx: Int, word: String, idx: Int, used: Array[Array[Boolean]]): Boolean = {
     if (board(rowIdx)(colIdx) != word.charAt(idx)) {
       return false
-    } else if (idx == word.length - 1)
+    } else if (idx == word.length - 1) {
       return true
+    }
 
     val direction: Array[(Int, Int)] = Array((0, 1), (0, -1), (-1, 0), (1, 0))
     used(rowIdx)(colIdx) = true
@@ -1740,7 +1741,7 @@ board 和 word 中只包含大写和小写英文字母。
       }
     }
     used(rowIdx)(colIdx) = false
-    return false
+    false
   }
 
   /*
