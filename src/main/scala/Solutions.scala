@@ -1603,8 +1603,8 @@ exection -> execution (插入 'u')
 
     var minLen = Int.MaxValue
     var minStr = ""
+    var distance = 0 // 通过distance来匹配s子串与t串匹配
 
-    var distance = 0
     while (right < sLen) {
       val sc = s.charAt(right)
       if (tArr(sc) > 0) {
@@ -1615,15 +1615,18 @@ exection -> execution (插入 'u')
 
         while (distance == tLen) {
           val tempC = s.charAt(left)
-          if (tArr(tempC) > 0 && tArr(tempC) == sArr(tempC)) {
-            if (minLen > (right - left + 1)) {
-              minLen = right - left + 1
-              minStr = s.substring(left, right + 1)
+
+          if (tArr(tempC) > 0) {
+            if (tArr(tempC) == sArr(tempC)) {
+              if (minLen > (right - left + 1)) {
+                minLen = right - left + 1
+                minStr = s.substring(left, right + 1)
+              }
+              distance -= 1
             }
-            distance -= 1
+            sArr(tempC) -= 1
           }
           left += 1
-          sArr(tempC) -= 1
         }
         right += 1
       } else {
