@@ -90,7 +90,8 @@ object Solutions {
     //    println(arr.mkString(" "))
     //    minWindow("ADOBECODEBANC", "ABC")
     //    subsets(Array(1, 2, 3))
-    println(minWindow("ADOBECODEBANC", "ABC"))
+    //    println(minWindow("ADOBECODEBANC", "ABC"))
+    println(exist(Array(Array('A', 'B', 'C', 'E'), Array('S', 'F', 'C', 'S'), Array('A', 'D', 'E', 'E')), "SEE"))
 
   }
 
@@ -1673,4 +1674,72 @@ exection -> execution (插入 'u')
 
     }
   }
+
+  /*
+  79. 单词搜索
+给定一个二维网格和一个单词，找出该单词是否存在于网格中。
+
+单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
+
+
+
+示例:
+
+board =
+[
+  ['A','B','C','E'],
+  ['S','F','C','S'],
+  ['A','D','E','E']
+]
+
+给定 word = "ABCCED", 返回 true
+给定 word = "SEE", 返回 true
+给定 word = "ABCB", 返回 false
+
+
+提示：
+
+board 和 word 中只包含大写和小写英文字母。
+1 <= board.length <= 200
+1 <= board[i].length <= 200
+1 <= word.length <= 10^3
+   */
+  def exist(board: Array[Array[Char]], word: String): Boolean = {
+    if (board.isEmpty) {
+      return false
+    }
+    val row = board.length
+    val col = board(0).length
+    val used: Array[Array[Boolean]] = Array.ofDim(row, col)
+
+    for (i <- 0 until row; j <- 0 until col) {
+      if (dfs(board, i, j, word, 0, used)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  def dfs(board: Array[Array[Char]], rowIdx: Int, colIdx: Int, word: String, idx: Int, used: Array[Array[Boolean]]): Boolean = {
+    if (board(rowIdx)(colIdx) != word.charAt(idx)) {
+      return false
+    } else if (idx == word.length - 1)
+      return true
+
+    val direction: Array[(Int, Int)] = Array((0, 1), (0, -1), (-1, 0), (1, 0))
+    used(rowIdx)(colIdx) = true
+
+    for (tp <- direction) {
+      val ri = rowIdx + tp._1
+      val ci = colIdx + tp._2
+      if (ri >= 0 && ri < board.length && ci >= 0 && ci < board(0).length && !used(ri)(ci)) {
+        if (dfs(board, ri, ci, word, idx + 1, used)) {
+          return true
+        }
+      }
+    }
+    used(rowIdx)(colIdx) = false
+    return false
+  }
+
 }
