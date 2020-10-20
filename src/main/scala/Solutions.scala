@@ -93,7 +93,25 @@ object Solutions {
     //    println(minWindow("ADOBECODEBANC", "ABC"))
     //    println(exist(Array(Array('A', 'B', 'C', 'E'), Array('S', 'F', 'C', 'S'), Array('A', 'D', 'E', 'E')), "SEE"))
     //    println(largestRectangleArea(Array(2, 1, 5, 5, 2, 3)))
-    println(maximalRectangle(Array(Array('1', '0', '1', '0', '0'), Array('1', '0', '1', '1', '1'), Array('1', '1', '1', '1', '1'), Array('1', '0', '0', '1', '0'))))
+    //    println(maximalRectangle(Array(Array('1', '0', '1', '0', '0'), Array('1', '0', '1', '1', '1'), Array('1', '1', '1', '1', '1'), Array('1', '0', '0', '1', '0'))))
+    //    val list: List[String] = List("a", "b", "a")
+    //    //为列表预添加元素
+    //    println("A" +: list)
+    //    //在列表开头添加元素
+    //    println("c" :: list)
+    //    //在列表开头添加指定列表的元素
+    //    println(List("d", "e") ::: list)
+    //    //复制添加元素后列表
+    //    println(list :+ "1")
+
+    val A = new TreeNode(1)
+    val B = new TreeNode(2)
+    val C = new TreeNode(3)
+    A.right = B
+    B.left = C
+
+    println(inorderTraversal(A))
+
 
   }
 
@@ -1853,5 +1871,69 @@ board 和 word 中只包含大写和小写英文字母。
     max
   }
 
+  /*
+      if (matrix.isEmpty)
+      return 0
 
+    var maxArea = 0
+    val dp: Array[Array[Int]] = Array.ofDim[Int](matrix.length, matrix(0).length)
+    for (i <- 0 until matrix.length; j <- 0 until matrix(0).length) {
+      if (matrix(i)(j) == '1') {
+        dp(i)(j) = if (j == 0) 1 else dp(i)(j - 1) + 1
+      }
+      var width = dp(i)(j)
+      for (k <- Range(i, -1, -1)) {
+        width = Math.min(width, dp(k)(j))
+        maxArea = Math.max(maxArea, width * (i - k + 1))
+      }
+    }
+    maxArea
+   */
+
+  class TreeNode(_value: Int = 0, _left: TreeNode = null, _right: TreeNode = null) {
+    var value: Int = _value
+    var left: TreeNode = _left
+    var right: TreeNode = _right
+
+  }
+
+  def inorderTraversal(root: TreeNode): List[Int] = {
+    import scala.collection.mutable
+    import scala.collection.mutable.ListBuffer
+
+    val buffer: ListBuffer[Int] = new ListBuffer[Int]()
+    val stack = new mutable.Stack[TreeNode]()
+    var curNode = root
+
+    while (curNode != null || !stack.isEmpty) {
+      if (curNode != null) {
+        stack.push(curNode)
+        curNode = curNode.left
+      } else {
+        curNode = stack.pop()
+        buffer.append(curNode.value)
+        curNode = curNode.right
+      }
+    }
+    buffer.toList
+  }
+
+  def inorderTraversal2(root: TreeNode): List[Int] = {
+    if (root == null)
+      return List[Int]()
+
+    val buffer: ListBuffer[Int] = new ListBuffer[Int]()
+    rec(root, buffer)
+
+    return buffer.toList
+  }
+
+  def rec(root: TreeNode, buffer: ListBuffer[Int]): Unit = {
+    if (root == null) {
+      return
+    }
+    rec(root.left, buffer)
+    buffer.append(root.value)
+    rec(root.right, buffer)
+  }
 }
