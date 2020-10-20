@@ -92,7 +92,8 @@ object Solutions {
     //    subsets(Array(1, 2, 3))
     //    println(minWindow("ADOBECODEBANC", "ABC"))
     //    println(exist(Array(Array('A', 'B', 'C', 'E'), Array('S', 'F', 'C', 'S'), Array('A', 'D', 'E', 'E')), "SEE"))
-    println(largestRectangleArea(Array(2, 1, 5, 5, 2, 3)))
+    //    println(largestRectangleArea(Array(2, 1, 5, 5, 2, 3)))
+    println(maximalRectangle(Array(Array('1', '0', '1', '0', '0'), Array('1', '0', '1', '1', '1'), Array('1', '1', '1', '1', '1'), Array('1', '0', '0', '1', '0'))))
 
   }
 
@@ -1797,5 +1798,60 @@ board 和 word 中只包含大写和小写英文字母。
     }
     max
   }
+
+  /*
+  85. 最大矩形
+给定一个仅包含 0 和 1 的二维二进制矩阵，找出只包含 1 的最大矩形，并返回其面积。
+
+示例:
+
+输入:
+[
+  ["1","0","1","0","0"],
+  ["1","0","1","1","1"],
+  ["1","1","1","1","1"],
+  ["1","0","0","1","0"]
+]
+输出: 6
+   */
+  def maximalRectangle(matrix: Array[Array[Char]]): Int = {
+    if (matrix.isEmpty)
+      return 0
+
+    var maxArea = 0
+    val dp: Array[Array[Int]] = Array.ofDim[Int](matrix.length, matrix(0).length)
+    for (i <- 0 until matrix.length; j <- 0 until matrix(0).length) {
+      if (matrix(i)(j) == '1') {
+        dp(i)(j) = if (j == 0) 1 else dp(i)(j - 1) + 1
+      }
+      var width = dp(i)(j)
+      for (k <- Range(i, -1, -1)) {
+        width = Math.min(width, dp(k)(j))
+        maxArea = Math.max(maxArea, width * (i - k + 1))
+      }
+    }
+    maxArea
+  }
+
+  def maximalRectangle2(matrix: Array[Array[Char]]): Int = {
+    if (matrix.isEmpty) {
+      return 0
+    }
+    val heights: Array[Int] = new Array[Int](matrix(0).length)
+    var max = 0
+    for (i <- 0 until matrix.length) {
+      for (j <- 0 until matrix(0).length) {
+        if (matrix(i)(j) == '1') {
+          heights(j) += 1
+        } else {
+          heights(j) = 0
+        }
+      }
+      val temp = largestRectangleArea(heights)
+      max = if (max < temp) temp else max
+    }
+    max
+  }
+
 
 }
