@@ -104,13 +104,17 @@ object Solutions {
     //    //复制添加元素后列表
     //    println(list :+ "1")
 
-    val A = new TreeNode(1)
-    val B = new TreeNode(2)
-    val C = new TreeNode(3)
-    A.right = B
-    B.left = C
-
-    println(inorderTraversal(A))
+    val A = new TreeNode(10)
+    val B = new TreeNode(5)
+    val C = new TreeNode(15)
+    val F = new TreeNode(6)
+    val G = new TreeNode(20)
+    A.left = B
+    A.right = C
+    //
+    //    println(inorderTraversal(A))
+    //    println(numTrees2(19))
+    println(isValidBST(A))
 
 
   }
@@ -1936,4 +1940,144 @@ board 和 word 中只包含大写和小写英文字母。
     buffer.append(root.value)
     rec(root.right, buffer)
   }
+
+  /*
+  96. 不同的二叉搜索树
+给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
+
+示例:
+
+输入: 3
+输出: 5
+解释:
+给定 n = 3, 一共有 5 种不同结构的二叉搜索树:
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+   */
+
+  def numTrees(n: Int): Int = {
+    // 推导出的 G(n)函数的值在数学上被称为卡塔兰数
+    val g: Array[Int] = new Array[Int](n + 1)
+    g(0) = 1
+    g(1) = 1
+    for (i <- 2 to n) {
+      for (j <- 1 to i) {
+        g(i) += g(j - 1) * g(i - j)
+      }
+    }
+    g(n)
+  }
+
+  def numTrees2(n: Int): Int = {
+    var C: Long = 1
+    for (i <- 0 until n) {
+      C = C * 2 * (2 * i + 1) / (i + 2)
+    }
+    C.toInt
+  }
+
+  /*
+  98. 验证二叉搜索树
+给定一个二叉树，判断其是否是一个有效的二叉搜索树。
+
+假设一个二叉搜索树具有如下特征：
+
+节点的左子树只包含小于当前节点的数。
+节点的右子树只包含大于当前节点的数。
+所有左子树和右子树自身必须也是二叉搜索树。
+示例 1:
+
+输入:
+    2
+   / \
+  1   3
+输出: true
+示例 2:
+
+输入:
+    5
+   / \
+  1   4
+     / \
+    3   6
+输出: false
+解释: 输入为: [5,1,4,null,null,3,6]。
+     根节点的值为 5 ，但是其右子节点值为 4 。
+   */
+  def isValidBST(root: TreeNode): Boolean = {
+    import scala.collection.mutable
+    var curNode = root
+    val stack: mutable.Stack[TreeNode] = new mutable.Stack[TreeNode]()
+    var inOrder: Double = Double.MinValue
+
+    while (curNode != null || !stack.isEmpty) {
+      while (curNode != null) {
+        stack.push(curNode)
+        curNode = curNode.left
+      }
+
+      curNode = stack.pop()
+      if (curNode.value <= inOrder) {
+        return false
+      }
+      inOrder = curNode.value
+      curNode = curNode.right
+    }
+    true
+  }
+
+  /*
+  101. 对称二叉树
+给定一个二叉树，检查它是否是镜像对称的。
+
+
+
+例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+
+
+但是下面这个 [1,2,2,null,3,null,3] 则不是镜像对称的:
+
+    1
+   / \
+  2   2
+   \   \
+   3    3
+
+
+进阶：
+
+你可以运用递归和迭代两种方法解决这个问题吗？
+   */
+  def isSymmetric(root: TreeNode): Boolean = {
+    if (root == null) {
+      return true
+    }
+    rec(root.left, root.right)
+
+  }
+
+  def rec(leftTree: TreeNode, rightTree: TreeNode): Boolean = {
+    if (leftTree == null && rightTree == null) {
+      return true
+    } else if (leftTree != null && rightTree != null) {
+      if (leftTree.value == rightTree.value) {
+        rec(leftTree.left, rightTree.right) && rec(leftTree.right, rightTree.left)
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
+  }
+
 }
