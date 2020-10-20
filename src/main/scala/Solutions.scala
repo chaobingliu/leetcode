@@ -1,4 +1,4 @@
-
+import scala.collection.mutable
 
 object Solutions {
   def main(args: Array[String]): Unit = {
@@ -1929,7 +1929,7 @@ board 和 word 中只包含大写和小写英文字母。
     val buffer: ListBuffer[Int] = new ListBuffer[Int]()
     rec(root, buffer)
 
-    return buffer.toList
+    buffer.toList
   }
 
   def rec(root: TreeNode, buffer: ListBuffer[Int]): Unit = {
@@ -2073,11 +2073,60 @@ board 和 word 中只包含大写和小写英文字母。
       if (leftTree.value == rightTree.value) {
         rec(leftTree.left, rightTree.right) && rec(leftTree.right, rightTree.left)
       } else {
-        return false
+        false
       }
     } else {
-      return false
+      false
     }
   }
+
+  /*
+  102. 二叉树的层序遍历
+给你一个二叉树，请你返回其按 层序遍历 得到的节点值。 （即逐层地，从左到右访问所有节点）。
+
+
+
+示例：
+二叉树：[3,9,20,null,null,15,7],
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回其层次遍历结果：
+
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+   */
+  def levelOrder(root: TreeNode): List[List[Int]] = {
+    import scala.collection.mutable.ListBuffer
+    import scala.collection.mutable
+    val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
+    val queue: mutable.Queue[TreeNode] = new mutable.Queue[TreeNode]()
+    if (root != null) {
+      queue.enqueue(root)
+    }
+    while (!queue.isEmpty) {
+      val size = queue.size
+      val temp = new ListBuffer[Int]()
+      for (i <- 0 until size) {
+        val node = queue.dequeue()
+        temp.append(node.value)
+        if (node.left != null) {
+          queue.enqueue(node.left)
+        }
+        if (node.right != null) {
+          queue.enqueue(node.right)
+        }
+      }
+      buffer.append(temp.toList)
+    }
+    buffer.toList
+  }
+
 
 }
