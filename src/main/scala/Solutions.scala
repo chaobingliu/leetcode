@@ -104,14 +104,14 @@ object Solutions {
     //    //复制添加元素后列表
     //    println(list :+ "1")
 
-    //    val A = new TreeNode(1)
-    //    val B = new TreeNode(2)
-    //    val C = new TreeNode(5)
+    val A = new TreeNode(0)
+    val B = new TreeNode(2)
+    val C = new TreeNode(3)
     //    val F = new TreeNode(3)
     //    val G = new TreeNode(4)
     //    val H = new TreeNode(6)
-    //    A.left = B
-    //    A.right = C
+    //        A.left = B
+    //        A.right = C
     //    B.left = F
     //    B.right = G
     //    C.right = H
@@ -122,7 +122,8 @@ object Solutions {
     //    println(isValidBST(A))
     //    buildTree(Array(4,1,2,3), Array(1,2,3,4))
     //    flatten(A)
-    println(maxProfit(Array(7, 1, 5, 3, 6, 4)))
+    //    println(maxProfit(Array(7, 1, 5, 3, 6, 4)))
+    println(maxPathSum(A))
 
   }
 
@@ -1296,14 +1297,13 @@ candidate 中的每个元素都是独一无二的。
   def maxSubArray(nums: Array[Int]): Int = {
     if (nums.isEmpty)
       return 0
-    val arr: Array[Int] = new Array[Int](nums.length)
-    arr(0) = nums(0)
-    var maxStrs = nums(0)
-    for (i <- 1 until arr.length) {
-      arr(i) = Math.max(arr(i - 1) + nums(i), nums(i))
-      maxStrs = if (maxStrs < arr(i)) arr(i) else maxStrs
+    var pre, maxSum = nums(0)
+
+    for (i <- 1 until nums.length) {
+      pre = Math.max(pre + nums(i), nums(i))
+      maxSum = Math.max(maxSum, pre)
     }
-    maxStrs
+    maxSum
   }
 
   /*
@@ -2350,6 +2350,53 @@ board 和 word 中只包含大写和小写英文字母。
       maxInt = Math.max(prices(j) - prices(i), maxInt)
     }
     maxInt
+  }
+
+  /*
+  124. 二叉树中的最大路径和
+给定一个非空二叉树，返回其最大路径和。
+
+本题中，路径被定义为一条从树中任意节点出发，沿父节点-子节点连接，达到任意节点的序列。该路径至少包含一个节点，且不一定经过根节点。
+
+
+
+示例 1：
+
+输入：[1,2,3]
+
+       1
+      / \
+     2   3
+
+输出：6
+示例 2：
+
+输入：[-10,9,20,null,null,15,7]
+
+   -10
+   / \
+  9  20
+    /  \
+   15   7
+
+输出：42
+   */
+
+  def maxPathSum(root: TreeNode): Int = {
+    val maxNode = new TreeNode(Int.MinValue)
+    recMaxPathSum(root, maxNode)
+    maxNode.value
+  }
+
+  def recMaxPathSum(root: TreeNode, maxNode: TreeNode): Int = {
+    if (root == null) {
+      return 0
+    }
+    val leftMax = Math.max(recMaxPathSum(root.left, maxNode), 0)
+    val rightMax = Math.max(recMaxPathSum(root.right, maxNode), 0)
+    maxNode.value = Math.max(leftMax + rightMax + root.value, maxNode.value)
+
+    return root.value + Math.max(leftMax, rightMax)
   }
 
 }
