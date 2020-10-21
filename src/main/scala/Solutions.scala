@@ -124,7 +124,7 @@ object Solutions {
     //    flatten(A)
     //    println(maxProfit(Array(7, 1, 5, 3, 6, 4)))
     //    println(maxPathSum(A))
-    println(longestConsecutive(Array(1, 0, -1)))
+    println(longestConsecutive(Array(0, 0)))
   }
 
   /*
@@ -2412,22 +2412,21 @@ board 和 word 中只包含大写和小写英文字母。
 解释: 最长连续序列是 [1, 2, 3, 4]。它的长度为 4。
    */
   def longestConsecutive(nums: Array[Int]): Int = {
-    if (nums.isEmpty)
-      return 0
     val set: Set[Int] = nums.toSet
-    var max = 1
+    var max = 0
     for (num <- set) {
-      if (set.contains(num - 1)) {
-        var currentNumber = num - 2
-        var currentLength = 2
-        while (set.contains(currentNumber)) {
+      if (!set.contains(num - 1)) {
+        var currentNumber = num
+        var currentLength = 1
+        while (set.contains(currentNumber + 1)) {
           currentLength += 1
-          currentNumber -= 1
+          currentNumber += 1
         }
         max = Math.max(max, currentLength)
       }
     }
     max
   }
+
 
 }
