@@ -104,18 +104,24 @@ object Solutions {
     //    //复制添加元素后列表
     //    println(list :+ "1")
 
-//    val A = new TreeNode(10)
-//    val B = new TreeNode(5)
-//    val C = new TreeNode(15)
-//    val F = new TreeNode(6)
-//    val G = new TreeNode(20)
-//    A.left = B
-//    A.right = C
+    val A = new TreeNode(1)
+    val B = new TreeNode(2)
+    val C = new TreeNode(5)
+    val F = new TreeNode(3)
+    val G = new TreeNode(4)
+    val H = new TreeNode(6)
+    A.left = B
+    A.right = C
+    B.left = F
+    B.right = G
+    C.right = H
+
     //
     //    println(inorderTraversal(A))
     //    println(numTrees2(19))
     //    println(isValidBST(A))
-    buildTree(Array(4,1,2,3), Array(1,2,3,4))
+    //    buildTree(Array(4,1,2,3), Array(1,2,3,4))
+    flatten(A)
 
 
   }
@@ -2250,5 +2256,54 @@ board 和 word 中只包含大写和小写英文字母。
     return root
 
   }
+
+  /*
+  114. 二叉树展开为链表
+给定一个二叉树，原地将它展开为一个单链表。
+
+
+
+例如，给定二叉树
+
+    1
+   / \
+  2   5
+ / \   \
+3   4   6
+将其展开为：
+
+1
+ \
+  2
+   \
+    3
+     \
+      4
+       \
+        5
+         \
+          6
+   */
+  import scala.collection.mutable.ListBuffer
+  def flatten(root: TreeNode): Unit = {
+    val buffer: ListBuffer[TreeNode] = new ListBuffer[TreeNode]()
+    var curNode = root
+    preorderRec(root, buffer)
+    for (i <- Range(1, buffer.length)) {
+      curNode.left = null
+      curNode.right = buffer(i)
+      curNode = curNode.right
+    }
+
+  }
+
+  def preorderRec(node: TreeNode, buffer: ListBuffer[TreeNode]): Unit = {
+    if (node != null) {
+      buffer.append(node)
+      preorderRec(node.left, buffer)
+      preorderRec(node.right, buffer)
+    }
+  }
+
 
 }
