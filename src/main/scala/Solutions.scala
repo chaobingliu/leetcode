@@ -104,9 +104,9 @@ object Solutions {
     //    //复制添加元素后列表
     //    println(list :+ "1")
 
-    val A = new TreeNode(0)
-    val B = new TreeNode(2)
-    val C = new TreeNode(3)
+    //    val A = new TreeNode(0)
+    //    val B = new TreeNode(2)
+    //    val C = new TreeNode(3)
     //    val F = new TreeNode(3)
     //    val G = new TreeNode(4)
     //    val H = new TreeNode(6)
@@ -125,7 +125,15 @@ object Solutions {
     //    println(maxProfit(Array(7, 1, 5, 3, 6, 4)))
     //    println(maxPathSum(A))
     //    println(longestConsecutive(Array(0, 0)))
-    println(singleNumber(Array(4, 1, 2, 1, 2)))
+    //    println(singleNumber(Array(4, 1, 2, 1, 2)))
+    //    println(wordBreak("penapple", List("pen", "apple")))
+    val node1 = new ListNode(1)
+    val node2 = new ListNode(2)
+    val node3 = new ListNode(3)
+    node1.next = node2
+    node2.next = node3
+    node3.next = node1
+    println(hasCycle(node1))
   }
 
   /*
@@ -2450,5 +2458,116 @@ board 和 word 中只包含大写和小写英文字母。
     nums.reduce(_ ^ _)
   }
 
+  /*
+  139. 单词拆分
+给定一个非空字符串 s 和一个包含非空单词的列表 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。
 
+说明：
+
+拆分时可以重复使用字典中的单词。
+你可以假设字典中没有重复的单词。
+示例 1：
+
+输入: s = "leetcode", wordDict = ["leet", "code"]
+输出: true
+解释: 返回 true 因为 "leetcode" 可以被拆分成 "leet code"。
+示例 2：
+
+输入: s = "applepenapple", wordDict = ["apple", "pen"]
+输出: true
+解释: 返回 true 因为 "applepenapple" 可以被拆分成 "apple pen apple"。
+     注意你可以重复使用字典中的单词。
+示例 3：
+
+输入: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
+输出: false
+   */
+
+  def wordBreak(s: String, wordDict: List[String]): Boolean = {
+    val dp: Array[Boolean] = new Array[Boolean](s.length + 1)
+    dp(0) = true
+    for (i <- 1 to s.length) {
+      for (j <- 0 until i) {
+        val str = s.substring(j, i)
+        if (dp(j) && wordDict.contains(str)) {
+          dp(i) = true
+        }
+      }
+    }
+    dp(s.length)
+  }
+
+  /*
+  141. 环形链表
+给定一个链表，判断链表中是否有环。
+
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
+
+如果链表中存在环，则返回 true 。 否则，返回 false 。
+
+
+
+进阶：
+
+你能用 O(1)（即，常量）内存解决此问题吗？
+
+
+
+示例 1：
+
+
+
+输入：head = [3,2,0,-4], pos = 1
+输出：true
+解释：链表中有一个环，其尾部连接到第二个节点。
+示例 2：
+
+
+
+输入：head = [1,2], pos = 0
+输出：true
+解释：链表中有一个环，其尾部连接到第一个节点。
+示例 3：
+
+
+
+输入：head = [1], pos = -1
+输出：false
+解释：链表中没有环。
+
+
+提示：
+
+链表中节点的数目范围是 [0, 104]
+-105 <= Node.val <= 105
+pos 为 -1 或者链表中的一个 有效索引 。
+   */
+  def hasCycle(head: ListNode): Boolean = {
+    if (head == null || head.next == null) {
+      return false
+    }
+    var fast: ListNode = head.next.next
+    var slow: ListNode = head.next
+    while (fast != slow) {
+      if (fast == null || fast.next == null) {
+        return false
+      }
+      fast = fast.next.next
+      slow = slow.next
+    }
+    true
+  }
+
+  def hasCycle2(head: ListNode): Boolean = {
+    import scala.collection.mutable.ListBuffer
+    var curNode = head
+    val buffer: ListBuffer[ListNode] = new ListBuffer[ListNode]()
+    while (curNode != null) {
+      if (buffer.contains(curNode))
+        return true
+      buffer.append(curNode)
+      curNode = curNode.next
+    }
+    false
+  }
 }
