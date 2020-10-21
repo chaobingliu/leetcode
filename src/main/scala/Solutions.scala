@@ -1,4 +1,4 @@
-import scala.collection.mutable
+
 
 object Solutions {
   def main(args: Array[String]): Unit = {
@@ -104,17 +104,18 @@ object Solutions {
     //    //复制添加元素后列表
     //    println(list :+ "1")
 
-    val A = new TreeNode(10)
-    val B = new TreeNode(5)
-    val C = new TreeNode(15)
-    val F = new TreeNode(6)
-    val G = new TreeNode(20)
-    A.left = B
-    A.right = C
+//    val A = new TreeNode(10)
+//    val B = new TreeNode(5)
+//    val C = new TreeNode(15)
+//    val F = new TreeNode(6)
+//    val G = new TreeNode(20)
+//    A.left = B
+//    A.right = C
     //
     //    println(inorderTraversal(A))
     //    println(numTrees2(19))
-    println(isValidBST(A))
+    //    println(isValidBST(A))
+    buildTree(Array(4,1,2,3), Array(1,2,3,4))
 
 
   }
@@ -2119,8 +2120,8 @@ board 和 word 中只包含大写和小写英文字母。
 ]
    */
   def levelOrder(root: TreeNode): List[List[Int]] = {
-    import scala.collection.mutable.ListBuffer
     import scala.collection.mutable
+    import scala.collection.mutable.ListBuffer
     val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
     val queue: mutable.Queue[TreeNode] = new mutable.Queue[TreeNode]()
     if (root != null) {
@@ -2144,5 +2145,110 @@ board 和 word 中只包含大写和小写英文字母。
     buffer.toList
   }
 
+  /*
+  104. 二叉树的最大深度
+给定一个二叉树，找出其最大深度。
+
+二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+
+说明: 叶子节点是指没有子节点的节点。
+
+示例：
+给定二叉树 [3,9,20,null,null,15,7]，
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回它的最大深度 3 。
+   */
+  def maxDepth(root: TreeNode): Int = {
+    if (root == null) {
+      0
+    } else {
+      Math.max(maxDepth(root.left), maxDepth(root.right)) + 1
+    }
+  }
+
+  def maxDepth2(root: TreeNode): Int = {
+    if (root == null) {
+      return 0
+    }
+    import scala.collection.mutable
+    var curNode: TreeNode = null
+    var maxLength = 0
+    val queue: mutable.Queue[TreeNode] = new mutable.Queue[TreeNode]()
+    queue.enqueue(root)
+    while (!queue.isEmpty) {
+      for (i <- 0 until queue.size) {
+        curNode = queue.dequeue()
+        if (curNode.left != null) {
+          queue.enqueue(curNode.left)
+        }
+        if (curNode.right != null) {
+          queue.enqueue(curNode.right)
+        }
+      }
+      maxLength += 1
+    }
+    maxLength
+  }
+
+
+  /*
+    105. 从前序与中序遍历序列构造二叉树
+  根据一棵树的前序遍历与中序遍历构造二叉树。
+
+  注意:
+  你可以假设树中没有重复的元素。
+
+  例如，给出
+
+  前序遍历 preorder = [3,9,20,15,7]
+  中序遍历 inorder = [9,3,15,20,7]
+  返回如下的二叉树：
+
+      3
+     / \
+    9  20
+      /  \
+     15   7
+     */
+
+  import scala.collection.mutable
+
+  def buildTree(preorder: Array[Int], inorder: Array[Int]): TreeNode = {
+    val n = preorder.length
+    if (n == 0) {
+      return null
+    }
+    if (n == 1) {
+      return new TreeNode(preorder(0))
+    }
+    val map: mutable.Map[Int, Int] = mutable.Map[Int, Int]()
+    for (i <- 0 until preorder.length) {
+      map.put(inorder(i), i)
+    }
+    myBuildTree(preorder, inorder, 0, n - 1, 0, n - 1, map)
+  }
+
+  def myBuildTree(preorder: Array[Int], inorder: Array[Int], pl: Int, pr: Int, il: Int, ir: Int, map: mutable.Map[Int, Int]): TreeNode = {
+    if (pl > pr)
+      return null
+
+    val root = new TreeNode(preorder(pl))
+
+    val rootIdx = map(preorder(pl))
+
+    val sizeOfLeft = rootIdx - il
+
+    root.left = myBuildTree(preorder, inorder, pl + 1, pl + sizeOfLeft, il, rootIdx - 1, map)
+
+    root.right = myBuildTree(preorder, inorder, pl + sizeOfLeft + 1, pr, rootIdx + 1, ir, map)
+
+    return root
+
+  }
 
 }
