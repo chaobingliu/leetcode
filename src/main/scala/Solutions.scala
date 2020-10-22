@@ -134,9 +134,10 @@ object Solutions {
     //    node1.next = node2
     //    node2.next = node3
     //    node3.next = node4
-    //    //    println(detectCycle(node1).x)
+    //    node4.next = node2
+    //    println(detectCycle(node1).x)
     //    sortList(node1)
-    println(maxProduct(Array(-2, 3, -4)))
+    //    println(maxProduct(Array(-2, 3, -4)))
   }
 
   /*
@@ -2635,9 +2636,8 @@ pos 的值为 -1 或者链表中的一个有效索引
         while (ptr != slow) {
           ptr = ptr.next
           slow = slow.next
-          index += 1
         }
-        return new ListNode(index)
+        return ptr
       }
     }
     null
