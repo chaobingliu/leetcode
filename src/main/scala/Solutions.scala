@@ -127,15 +127,16 @@ object Solutions {
     //    println(longestConsecutive(Array(0, 0)))
     //    println(singleNumber(Array(4, 1, 2, 1, 2)))
     //    println(wordBreak("penapple", List("pen", "apple")))
-    val node1 = new ListNode(3)
-    val node2 = new ListNode(2)
-    val node3 = new ListNode(0)
-    val node4 = new ListNode(-4)
-    node1.next = node2
-    node2.next = node3
-    node3.next = node4
-    node4.next = node2
-    println(detectCycle(node1).x)
+    //    val node1 = new ListNode(4)
+    //    val node2 = new ListNode(2)
+    //    val node3 = new ListNode(1)
+    //    val node4 = new ListNode(3)
+    //    node1.next = node2
+    //    node2.next = node3
+    //    node3.next = node4
+    //    //    println(detectCycle(node1).x)
+    //    sortList(node1)
+    println(maxProduct(Array(-2, 3, -4)))
   }
 
   /*
@@ -2640,6 +2641,82 @@ pos 的值为 -1 或者链表中的一个有效索引
       }
     }
     null
+  }
 
+  /*
+  148. 排序链表
+在 O(n log n) 时间复杂度和常数级空间复杂度下，对链表进行排序。
+
+示例 1:
+
+输入: 4->2->1->3
+输出: 1->2->3->4
+示例 2:
+
+输入: -1->5->3->4->0
+输出: -1->0->3->4->5
+   */
+  def sortList(head: ListNode): ListNode = {
+    if (head == null || head.next == null)
+      return head
+    var slow = head
+    var fast = head.next
+    while (fast != null && fast.next != null) {
+      slow = slow.next
+      fast = fast.next.next
+    }
+    val middle = slow.next
+    slow.next = null
+    var leftNode = sortList(head)
+    var rightNode = sortList(middle)
+    var curNode: ListNode = new ListNode(0)
+    var retNode = curNode
+    while (leftNode != null && rightNode != null) {
+      if (leftNode.x < rightNode.x) {
+        curNode.next = leftNode
+        leftNode = leftNode.next
+      } else {
+        curNode.next = rightNode
+        rightNode = rightNode.next
+      }
+      curNode = curNode.next
+    }
+    curNode.next = if (leftNode != null) leftNode else rightNode
+    retNode.next
+  }
+
+  /*
+  152. 乘积最大子数组
+给你一个整数数组 nums ，请你找出数组中乘积最大的连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+
+
+示例 1:
+
+输入: [2,3,-2,4]
+输出: 6
+解释: 子数组 [2,3] 有最大乘积 6。
+示例 2:
+
+输入: [-2,0,-1]
+输出: 0
+解释: 结果不能为 2, 因为 [-2,-1] 不是子数组。
+   */
+  def maxProduct(nums: Array[Int]): Int = {
+    if (nums.isEmpty)
+      return 0
+    val len = nums.length
+    var maxMul = nums(0)
+    val maxDp: Array[Int] = new Array[Int](len)
+    val minDp: Array[Int] = new Array[Int](len)
+    maxDp(0) = nums(0)
+    minDp(0) = nums(0)
+
+    for (i <- 1 until len) {
+      maxDp(i) = Math.max(Math.max(maxDp(i - 1) * nums(i), minDp(i - 1) * nums(i)), nums(i))
+      minDp(i) = Math.min(Math.min(maxDp(i - 1) * nums(i), minDp(i - 1) * nums(i)), nums(i))
+      maxMul = Math.max(maxMul, maxDp(i))
+    }
+    maxMul
   }
 }
