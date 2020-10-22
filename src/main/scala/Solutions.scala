@@ -2670,7 +2670,7 @@ pos 的值为 -1 或者链表中的一个有效索引
     var leftNode = sortList(head)
     var rightNode = sortList(middle)
     var curNode: ListNode = new ListNode(0)
-    var retNode = curNode
+    val retNode = curNode
     while (leftNode != null && rightNode != null) {
       if (leftNode.x < rightNode.x) {
         curNode.next = leftNode
