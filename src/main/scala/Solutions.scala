@@ -138,10 +138,11 @@ object Solutions {
     //    println(detectCycle(node1).x)
     //    sortList(node1)
     //    println(maxProduct(Array(-2, 3, -4)))
-    val a = new ListNode(3)
-    val d = new ListNode(2)
-    d.next = a
-    getIntersectionNode(a, a)
+    //    val a = new ListNode(3)
+    //    val d = new ListNode(2)
+    //    d.next = a
+    //    getIntersectionNode(a, a)
+    println(rob(Array(1, 2, 3, 1)))
   }
 
   /*
@@ -2784,5 +2785,77 @@ pos 的值为 -1 或者链表中的一个有效索引
       n = if (n == null) headA else n.next
     }
     m
+  }
+
+  /*
+  169. 多数元素
+给定一个大小为 n 的数组，找到其中的多数元素。多数元素是指在数组中出现次数大于 ⌊ n/2 ⌋ 的元素。
+
+你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+
+
+示例 1:
+
+输入: [3,2,3]
+输出: 3
+示例 2:
+
+输入: [2,2,1,1,1,2,2]
+输出: 2
+   */
+  def majorityElement(nums: Array[Int]): Int = {
+    var count = 0
+    var candidate: Int = 0
+    for (num <- nums) {
+      if (count == 0) {
+        candidate = num
+      }
+      count = (if (candidate == num) 1 else -1) + count
+    }
+    candidate
+  }
+
+  /*
+  198. 打家劫舍
+你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+
+给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。
+
+
+
+示例 1：
+
+输入：[1,2,3,1]
+输出：4
+解释：偷窃 1 号房屋 (金额 = 1) ，然后偷窃 3 号房屋 (金额 = 3)。
+     偷窃到的最高金额 = 1 + 3 = 4 。
+示例 2：
+
+输入：[2,7,9,3,1]
+输出：12
+解释：偷窃 1 号房屋 (金额 = 2), 偷窃 3 号房屋 (金额 = 9)，接着偷窃 5 号房屋 (金额 = 1)。
+     偷窃到的最高金额 = 2 + 9 + 1 = 12 。
+
+
+提示：
+
+0 <= nums.length <= 100
+0 <= nums[i] <= 400
+   */
+  def rob(nums: Array[Int]): Int = {
+    if (nums == null || nums.isEmpty)
+      return 0
+    val len = nums.length
+    if (len == 1) {
+      return nums(0)
+    }
+    val dp: Array[Int] = new Array(len)
+    dp(0) = nums(0)
+    dp(1) = Math.max(nums(0), nums(1))
+    for (i <- 2 until len) {
+      dp(i) = Math.max(nums(i) + dp(i - 2), dp(i - 1))
+    }
+    dp(len - 1)
   }
 }
