@@ -142,8 +142,14 @@ object Solutions {
     //    val d = new ListNode(2)
     //    d.next = a
     //    getIntersectionNode(a, a)
-//    println(rob(Array(1, 2, 3, 1)))
-    println(numIslands(Array(Array('1','1','1','1','0'),Array('1','1','0','1','0'),Array('1','1','0','0','0'),Array('0','0','0','0','0'))))
+    //    println(rob(Array(1, 2, 3, 1)))
+    //    println(numIslands(Array(Array('1', '1', '1', '1', '0'), Array('1', '1', '0', '1', '0'), Array('1', '1', '0', '0', '0'), Array('0', '0', '0', '0', '0'))))
+    val a = new ListNode(3)
+    val b = new ListNode(2)
+    val d = new ListNode(1)
+    a.next = b
+    b.next = d
+    println(reverseList(a))
   }
 
   /*
@@ -2922,5 +2928,35 @@ grid[i][j] 的值为 '0' 或 '1'
     dfsNumIsLands(g, r + 1, c, row, col)
     dfsNumIsLands(g, r, c - 1, row, col)
     dfsNumIsLands(g, r, c + 1, row, col)
+  }
+
+  /*
+  206. 反转链表
+反转一个单链表。
+
+示例:
+
+输入: 1->2->3->4->5->NULL
+输出: 5->4->3->2->1->NULL
+进阶:
+你可以迭代或递归地反转链表。你能否用两种方法解决这道题？
+   */
+  def reverseList(head: ListNode): ListNode = {
+    if (head == null)
+      return null
+    var node = head
+    val stack: mutable.Stack[ListNode] = new mutable.Stack[ListNode]()
+    while (node != null) {
+      stack.push(node)
+      node = node.next
+    }
+    val retNode = stack.pop
+    var curNode = retNode
+    while (!stack.isEmpty) {
+      curNode.next = stack.pop()
+      curNode = curNode.next
+    }
+    curNode.next = null
+    retNode
   }
 }
