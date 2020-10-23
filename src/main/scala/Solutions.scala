@@ -2903,31 +2903,21 @@ grid[i][j] 的值为 '0' 或 '1'
 
     val row = grid.length
     val col = grid(0).length
-    var g :ArrayBuffer[ArrayBuffer[Char]] = ArrayBuffer[ArrayBuffer[Char]]()
-    for (i <- 0 until row) {
-      var af: ArrayBuffer[Char] = new ArrayBuffer[Char]()
-      for (j <- 0 until col) {
-        af += (grid(i)(j))
-      }
-      g += af
-    }
-
-
     var count: Int = 0
     for (i <- 0 until row; j <- 0 until col) {
       if (grid(i)(j) == '1') {
         count += 1
-        dfsNumIsLands(g, i, j, row, col)
+        dfsNumIsLands(grid, i, j, row, col)
       }
     }
     count
   }
 
-  def dfsNumIsLands(g: ArrayBuffer[ArrayBuffer[Char]], r: Int, c: Int, row: Int, col: Int): Unit = {
+  def dfsNumIsLands(g: Array[Array[Char]], r: Int, c: Int, row: Int, col: Int): Unit = {
     if (c < 0 || r < 0 || c >= col || r >= row || g(r)(c) == '0')
       return
 
-    g(r)(c) == '0'
+    g(r)(c) = '0'
     dfsNumIsLands(g, r - 1, c, row, col)
     dfsNumIsLands(g, r + 1, c, row, col)
     dfsNumIsLands(g, r, c - 1, row, col)
