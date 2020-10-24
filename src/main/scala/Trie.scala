@@ -1,6 +1,3 @@
-import scala.collection.mutable.ListBuffer
-import scala.util.control.Breaks
-
 /*
 208. 实现 Trie (前缀树)
 实现一个 Trie (前缀树)，包含 insert, search, 和 startsWith 这三个操作。
@@ -21,110 +18,73 @@ trie.search("app");     // 返回 true
 保证所有输入均为非空字符串。
  */
 class Trie {
-  val head: TreeListNode = new TreeListNode()
-
+  val root: TrieNode = new TrieNode()
   /** Initialize your data structure here. */
-
 
   /** Inserts a word into the trie. */
   def insert(word: String) {
-    if (word == null || word.isEmpty) {
-      return
+    var tempNode = root
+    for (c <- word) {
+      if (!tempNode.contais(c)) {
+        tempNode.put(c, new TrieNode(c))
+      }
+      tempNode = tempNode.get(c)
     }
-    var temp = head
-    for (i <- 0 until word.length) {
-      val next = temp.links
-      if (next != null) {
-        val loop = new Breaks
-        loop.breakable {
-          for (j <- 0 to next.length) {
-            if (next(j).value == word.charAt(i)) {
-              temp = next(j)
-              loop.break()
-            }
-            if (j == next.length - 1) {
-              val newTree = new TreeListNode(word.charAt(i))
-              temp.links.append(newTree)
-              temp = newTree
-            }
-          }
-        }
+    tempNode.isEnd = true
+  }
+
+  def searchPrefix(prefix: String): TrieNode = {
+    var tempNode = root
+    for (c <- prefix) {
+      if (tempNode.contais(c)) {
+        tempNode = tempNode.get(c)
       } else {
-        temp.links = new ListBuffer[TreeListNode]()
-        val newTree = new TreeListNode(word.charAt(i))
-        temp.links.append(newTree)
-        temp = newTree
+        return null
       }
     }
-    temp.isEnd = true
+    tempNode
   }
 
   /** Returns if the word is in the trie. */
   def search(word: String): Boolean = {
-    var temp = head
-    for (i <- 0 until word.length) {
-      val next = temp.links
-      if (next != null) {
-        val loop = new Breaks
-        loop.breakable {
-          for (j <- 0 until next.length) {
-            if (next(j).value == word.charAt(i)) {
-              temp = next(j)
-              loop.break()
-            }
-          }
-          return false
-        }
-      } else {
-        return false
-      }
-    }
-    temp.isEnd
-
+    val ret = searchPrefix(word)
+    ret != null && ret.isEnd
   }
 
   /** Returns if there is any word in the trie that starts with the given prefix. */
   def startsWith(prefix: String): Boolean = {
-    var temp = head
-    if (head.links == null) {
-      return prefix.isEmpty
-    }
-    for (i <- 0 until prefix.length) {
-      val next = temp.links
-      if (next != null) {
-        val loop = new Breaks
-        loop.breakable {
-          for (t <- next) {
-            if (t.value == prefix.charAt(i)) {
-              temp = t
-              loop.break()
-            }
-          }
-          return false
-        }
-      } else {
-        return false
-      }
-    }
-    true
+    val ret = searchPrefix(prefix)
+    ret != null
   }
 }
 
-class TreeListNode(val _c: Char = ' ') {
+class TrieNode(val _c: Char = ' ') {
   val value = _c
   var isEnd = false
-  var links: ListBuffer[TreeListNode] = _
+  var links: Array[TrieNode] = new Array[TrieNode](26)
+
+  def contais(c: Char): Boolean = {
+    links(c - 'a') != null
+  }
+
+  def get(c: Char): TrieNode = {
+    links(c - 'a')
+  }
+
+  def put(c: Char, node: TrieNode): Unit = {
+    links(c - 'a') = node
+  }
 }
 
 object testtree {
   def main(args: Array[String]): Unit = {
     val obj = new Trie
-    //    obj.insert("apple")
-    //    obj.insert("apk")
-    //    println(obj.search("apple"))
-    //    println(obj.search("app"))
-    //    println(obj.search("apk"))
-    //    println(obj.startsWith("ap"))
+    //        obj.insert("apple")
+    //        obj.insert("apk")
+    //        println(obj.search("apple"))
+    //        println(obj.search("app"))
+    //        println(obj.search("apk"))
+    //        println(obj.startsWith("ap"))
     println(obj.startsWith("a"))
   }
 }
