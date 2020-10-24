@@ -1,5 +1,3 @@
-import scala.collection.mutable.ArrayBuffer
-
 object Solutions {
   def main(args: Array[String]): Unit = {
     //    println("abc".last)
@@ -150,7 +148,8 @@ object Solutions {
     //    a.next = b
     //    b.next = d
     //    println(reverseList(a))
-    println(canFinish(3, Array(Array(1, 0), Array(2, 1))))
+    //    println(canFinish(3, Array(Array(1, 0), Array(2, 1))))
+    println(findKthLargest(Array(3, 2, 1, 5, 6, 4), 2))
   }
 
   /*
@@ -3024,4 +3023,63 @@ grid[i][j] 的值为 '0' 或 '1'
     retCount == numCourses
   }
 
+  /*
+  215. 数组中的第K个最大元素
+在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+示例 1:
+
+输入: [3,2,1,5,6,4] 和 k = 2
+输出: 5
+示例 2:
+
+输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
+输出: 4
+说明:
+
+你可以假设 k 总是有效的，且 1 ≤ k ≤ 数组的长度。
+   */
+
+  import scala.util.Random
+
+  def findKthLargest(nums: Array[Int], k: Int): Int = {
+    //    nums.sorted.reverse(k - 1)
+    quickSort(nums, 0, nums.length - 1, nums.length - k)
+  }
+
+  def swap(arr: Array[Int], i: Int, j: Int): Unit = {
+    val temp = arr(i)
+    arr(i) = arr(j)
+    arr(j) = temp
+  }
+
+  def partition(arr: Array[Int], l: Int, r: Int): Int = {
+    val x = arr(r)
+    var i = l - 1
+    for (j <- l until r) {
+      if (arr(j) <= x) {
+        i += 1
+        swap(arr, i, j)
+      }
+    }
+    swap(arr, i + 1, r)
+    i + 1
+  }
+
+  def randomPartition(arr: Array[Int], l: Int, r: Int): Int = {
+    val i = Random.nextInt(r - l + 1) + l
+    swap(arr, i, r)
+    partition(arr, l, r)
+  }
+
+  def quickSort(arr: Array[Int], l: Int, r: Int, index: Int): Int = {
+    val q = randomPartition(arr, l, r)
+    if (q == index) {
+      arr(q)
+    } else if (q > index) {
+      quickSort(arr, l, q - 1, index)
+    } else {
+      quickSort(arr, q + 1, r, index)
+    }
+  }
 }
