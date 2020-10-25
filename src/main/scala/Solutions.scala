@@ -125,14 +125,13 @@ object Solutions {
     //    println(longestConsecutive(Array(0, 0)))
     //    println(singleNumber(Array(4, 1, 2, 1, 2)))
     //    println(wordBreak("penapple", List("pen", "apple")))
-    //    val node1 = new ListNode(4)
-    //    val node2 = new ListNode(2)
-    //    val node3 = new ListNode(1)
-    //    val node4 = new ListNode(3)
-    //    node1.next = node2
-    //    node2.next = node3
-    //    node3.next = node4
-    //    node4.next = node2
+    //        val node1 = new ListNode(1)
+    //        val node2 = new ListNode(2)
+    //        val node3 = new ListNode(2)
+    //        val node4 = new ListNode(1)
+    //        node1.next = node2
+    //        node2.next = node3
+    //        node3.next = node4
     //    println(detectCycle(node1).x)
     //    sortList(node1)
     //    println(maxProduct(Array(-2, 3, -4)))
@@ -150,8 +149,17 @@ object Solutions {
     //    println(reverseList(a))
     //    println(canFinish(3, Array(Array(1, 0), Array(2, 1))))
     //    println(findKthLargest(Array(3, 2, 1, 5, 6, 4), 2))
-
-    println(maximalSquare(Array(Array('1', '0', '1', '0', '0'), Array('1', '0', '1', '1', '1'), Array('1', '1', '1', '1', '1'), Array('1', '0', '0', '1', '0'))))
+    val node1 = new ListNode(1)
+    val node2 = new ListNode(2)
+    val node3 = new ListNode(2)
+    val node4 = new ListNode(1)
+    val node5 = new ListNode(1)
+    node1.next = node2
+    node2.next = node3
+    node3.next = node4
+    //    node4.next = node5
+    println(isPalindrome(node1))
+    //    println(maximalSquare(Array(Array('1', '0', '1', '0', '0'), Array('1', '0', '1', '1', '1'), Array('1', '1', '1', '1', '1'), Array('1', '0', '0', '1', '0'))))
   }
 
   /*
@@ -3156,7 +3164,59 @@ grid[i][j] 的值为 '0' 或 '1'
     root
   }
 
+  /*
+  234. 回文链表
+请判断一个链表是否为回文链表。
 
-}
+示例 1:
 
+输入: 1->2
+输出: false
+示例 2:
+
+输入: 1->2->2->1
+输出: true
+进阶：
+你能否用 O(n) 时间复杂度和 O(1) 空间复杂度解决此题？
+   */
+  def isPalindrome(head: ListNode): Boolean = {
+    if (head == null)
+      return true
+    val halfNode = findHalf(head)
+    var rightNode = reverseListNode(halfNode.next)
+
+    var leftNode = head
+    while (rightNode != null) {
+      if (leftNode.x != rightNode.x) {
+        halfNode.next = reverseListNode(rightNode) // 还原原链表
+        return false
+      }
+      leftNode = leftNode.next
+      rightNode = rightNode.next
+    }
+    halfNode.next = reverseListNode(rightNode)
+    true
+  }
+
+  def findHalf(node: ListNode): ListNode = {
+    var slow: ListNode = node
+    var fast: ListNode = node
+    while (fast.next != null && fast.next.next != null) {
+      slow = slow.next
+      fast = fast.next.next
+    }
+    slow
+  }
+
+  def reverseListNode(node: ListNode): ListNode = {
+    var preNode: ListNode = null
+    var curNode = node
+    while (curNode != null) {
+      val temp = curNode.next
+      curNode.next = preNode
+      preNode = curNode
+      curNode = temp
+    }
+    preNode
+  }
 }
