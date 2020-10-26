@@ -174,7 +174,8 @@ object Solutions {
     //    //    B.right = G
     //    //    C.right = H
     //    println(lowestCommonAncestor2(A, B, A).value)
-    println(Range(3, -1, -1).map(println))
+    //    println(Range(3, -1, -1).map(println))
+    maxSlidingWindow(Array(1, 3, -1, -3, 5, 3, 6, 7), 2).foreach(println)
   }
 
   /*
@@ -3357,5 +3358,64 @@ p、q 为不同节点且均存在于给定的二叉树中。
     retArr
   }
 
+  /*
+  239. 滑动窗口最大值
+给定一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+
+返回滑动窗口中的最大值。
+
+
+
+进阶：
+
+你能在线性时间复杂度内解决此题吗？
+
+
+
+示例:
+
+输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+输出: [3,3,5,5,6,7]
+解释:
+
+  滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+
+
+提示：
+
+1 <= nums.length <= 10^5
+-10^4 <= nums[i] <= 10^4
+1 <= k <= nums.length
+   */
+  def maxSlidingWindow(nums: Array[Int], k: Int): Array[Int] = {
+    if (nums == null) {
+      return null
+    }
+    val len = nums.length
+    val leftMax: Array[Int] = new Array[Int](len)
+    val rightMax: Array[Int] = new Array[Int](len)
+    leftMax(0) = nums(0)
+    rightMax(len - 1) = nums(len - 1)
+
+    for (i <- 1 until len) {
+      leftMax(i) = if (i % k == 0) nums(i) else Math.max(leftMax(i - 1), nums(i))
+      val j = len - i - 1
+      rightMax(j) = if ((j + 1) % k == 0) nums(j) else Math.max(rightMax(j + 1), nums(j))
+    }
+
+    val retArr: Array[Int] = new Array[Int](len - k + 1)
+    retArr(0) = nums.slice(0, k).max
+    for (i <- 0 to len-k) {
+      retArr(i) = Math.max(leftMax(i+k-1), rightMax(i))
+    }
+    retArr
+  }
 
 }
