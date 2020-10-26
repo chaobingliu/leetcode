@@ -173,11 +173,11 @@ object Solutions {
     //    B.left = F
     //    B.right = G
     //    C.right = H
-    println(lowestCommonAncestor(A, B, A).value)
+    println(lowestCommonAncestor2(A, B, A).value)
   }
 
   /*
-1. 两数之和
+1. 两数之和G
 给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那 两个 整数，并返回他们的数组下标。
 
 你可以假设每种输入只会对应一个答案。但是，数组中同一个元素不能使用两遍。
@@ -3234,13 +3234,63 @@ grid[i][j] 的值为 '0' 或 '1'
     preNode
   }
 
+  /*
+  236. 二叉树的最近公共祖先
+给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+
+百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”
+
+例如，给定如下二叉树:  root = [3,5,1,6,2,0,8,null,null,7,4]
+
+
+
+
+
+示例 1:
+
+输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+输出: 3
+解释: 节点 5 和节点 1 的最近公共祖先是节点 3。
+示例 2:
+
+输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+输出: 5
+解释: 节点 5 和节点 4 的最近公共祖先是节点 5。因为根据定义最近公共祖先节点可以为节点本身。
+
+
+说明:
+
+所有节点的值都是唯一的。
+p、q 为不同节点且均存在于给定的二叉树中。
+   */
+  var retNode: TreeNode = null
+
   def lowestCommonAncestor(root: TreeNode, p: TreeNode, q: TreeNode): TreeNode = {
+    dfsparent(root, p, q)
+    retNode
+  }
+
+  def dfsparent(root: TreeNode, p: TreeNode, q: TreeNode): Boolean = {
+    if (root == null)
+      return false
+    val lson = dfsparent(root.left, p, q)
+    val rson = dfsparent(root.right, p, q)
+
+    if ((lson && rson) || (root.value == p.value || root.value == q.value) && (lson || rson)) {
+      retNode = root
+    }
+    return lson || rson || (root.value == p.value || root.value == q.value)
+
+  }
+
+
+  def lowestCommonAncestor2(root: TreeNode, p: TreeNode, q: TreeNode): TreeNode = {
     var vp = p
     var vq = q
     val visitMap: mutable.Map[Int, Boolean] = mutable.Map[Int, Boolean]()
     val parentMap: mutable.Map[Int, TreeNode] = mutable.Map[Int, TreeNode]()
     parentMap.put(root.value, null)
-    dfsparent(root, parentMap)
+    dfsparent2(root, parentMap)
 
     while (vp != null) {
       visitMap.put(vp.value, true)
@@ -3255,14 +3305,16 @@ grid[i][j] 的值为 '0' 或 '1'
     null
   }
 
-  def dfsparent(root: TreeNode, parentMap: mutable.Map[Int, TreeNode]): Unit = {
+  def dfsparent2(root: TreeNode, parentMap: mutable.Map[Int, TreeNode]): Unit = {
     if (root.left != null) {
       parentMap.put(root.left.value, root)
-      dfsparent(root.left, parentMap)
+      dfsparent2(root.left, parentMap)
     }
     if (root.right != null) {
       parentMap.put(root.right.value, root)
-      dfsparent(root.right, parentMap)
+      dfsparent2(root.right, parentMap)
     }
   }
+
+
 }
