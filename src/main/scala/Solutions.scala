@@ -149,17 +149,31 @@ object Solutions {
     //    println(reverseList(a))
     //    println(canFinish(3, Array(Array(1, 0), Array(2, 1))))
     //    println(findKthLargest(Array(3, 2, 1, 5, 6, 4), 2))
-    val node1 = new ListNode(1)
-    val node2 = new ListNode(2)
-    val node3 = new ListNode(2)
-    val node4 = new ListNode(1)
-    val node5 = new ListNode(1)
-    node1.next = node2
-    node2.next = node3
-    node3.next = node4
+    //    val node1 = new ListNode(1)
+    //    val node2 = new ListNode(2)
+    //    val node3 = new ListNode(2)
+    //    val node4 = new ListNode(1)
+    //    val node5 = new ListNode(1)
+    //    node1.next = node2
+    //    node2.next = node3
+    //    node3.next = node4
     //    node4.next = node5
-    println(isPalindrome(node1))
+    //    println(isPalindrome(node1))
     //    println(maximalSquare(Array(Array('1', '0', '1', '0', '0'), Array('1', '0', '1', '1', '1'), Array('1', '1', '1', '1', '1'), Array('1', '0', '0', '1', '0'))))
+
+
+    val A = new TreeNode(0)
+    val B = new TreeNode(2)
+    val C = new TreeNode(3)
+    val F = new TreeNode(4)
+    val G = new TreeNode(5)
+    val H = new TreeNode(6)
+    A.left = B
+    //    A.right = C
+    //    B.left = F
+    //    B.right = G
+    //    C.right = H
+    println(lowestCommonAncestor(A, B, A).value)
   }
 
   /*
@@ -2999,8 +3013,8 @@ grid[i][j] 的值为 '0' 或 '1'
 1 <= numCourses <= 10^5
    */
   def canFinish(numCourses: Int, prerequisites: Array[Array[Int]]): Boolean = {
-    import scala.collection.mutable.ListBuffer
     import scala.collection.mutable
+    import scala.collection.mutable.ListBuffer
     val edges: Array[ListBuffer[Int]] = new Array[ListBuffer[Int]](numCourses)
     val inedge: Array[Int] = new Array[Int](numCourses)
     for (i <- 0 until numCourses) {
@@ -3218,5 +3232,37 @@ grid[i][j] 的值为 '0' 或 '1'
       curNode = temp
     }
     preNode
+  }
+
+  def lowestCommonAncestor(root: TreeNode, p: TreeNode, q: TreeNode): TreeNode = {
+    var vp = p
+    var vq = q
+    val visitMap: mutable.Map[Int, Boolean] = mutable.Map[Int, Boolean]()
+    val parentMap: mutable.Map[Int, TreeNode] = mutable.Map[Int, TreeNode]()
+    parentMap.put(root.value, null)
+    dfsparent(root, parentMap)
+
+    while (vp != null) {
+      visitMap.put(vp.value, true)
+      vp = parentMap(vp.value)
+    }
+    while (vq != null) {
+      if (visitMap.contains(vq.value)) {
+        return vq
+      }
+      vq = parentMap(vq.value)
+    }
+    null
+  }
+
+  def dfsparent(root: TreeNode, parentMap: mutable.Map[Int, TreeNode]): Unit = {
+    if (root.left != null) {
+      parentMap.put(root.left.value, root)
+      dfsparent(root.left, parentMap)
+    }
+    if (root.right != null) {
+      parentMap.put(root.right.value, root)
+      dfsparent(root.right, parentMap)
+    }
   }
 }
