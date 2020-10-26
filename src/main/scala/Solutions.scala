@@ -161,19 +161,20 @@ object Solutions {
     //    println(isPalindrome(node1))
     //    println(maximalSquare(Array(Array('1', '0', '1', '0', '0'), Array('1', '0', '1', '1', '1'), Array('1', '1', '1', '1', '1'), Array('1', '0', '0', '1', '0'))))
 
-
-    val A = new TreeNode(0)
-    val B = new TreeNode(2)
-    val C = new TreeNode(3)
-    val F = new TreeNode(4)
-    val G = new TreeNode(5)
-    val H = new TreeNode(6)
-    A.left = B
-    //    A.right = C
-    //    B.left = F
-    //    B.right = G
-    //    C.right = H
-    println(lowestCommonAncestor2(A, B, A).value)
+    //
+    //    val A = new TreeNode(0)
+    //    val B = new TreeNode(2)
+    //    val C = new TreeNode(3)
+    //    val F = new TreeNode(4)
+    //    val G = new TreeNode(5)
+    //    val H = new TreeNode(6)
+    //    A.left = B
+    //    //    A.right = C
+    //    //    B.left = F
+    //    //    B.right = G
+    //    //    C.right = H
+    //    println(lowestCommonAncestor2(A, B, A).value)
+    println(Range(3, -1, -1).map(println))
   }
 
   /*
@@ -3314,6 +3315,46 @@ p、q 为不同节点且均存在于给定的二叉树中。
       parentMap.put(root.right.value, root)
       dfsparent2(root.right, parentMap)
     }
+  }
+
+  /*
+  238. 除自身以外数组的乘积
+给你一个长度为 n 的整数数组 nums，其中 n > 1，返回输出数组 output ，其中 output[i] 等于 nums 中除 nums[i] 之外其余各元素的乘积。
+
+
+
+示例:
+
+输入: [1,2,3,4]
+输出: [24,12,8,6]
+
+
+提示：题目数据保证数组之中任意元素的全部前缀元素和后缀（甚至是整个数组）的乘积都在 32 位整数范围内。
+
+说明: 请不要使用除法，且在 O(n) 时间复杂度内完成此题。
+
+进阶：
+   */
+  def productExceptSelf(nums: Array[Int]): Array[Int] = {
+    if (nums == null)
+      return null
+    val len = nums.length
+    val lArr: Array[Int] = new Array[Int](len)
+    val rArr: Array[Int] = new Array[Int](len)
+    lArr(0) = 1
+    for (i <- 1 until len) {
+      lArr(i) = lArr(i - 1) * nums(i - 1)
+    }
+    rArr(len - 1) = 1
+    for (j <- Range(len - 2, -1, -1)) {
+      rArr(j) = rArr(j + 1) * nums(j + 1)
+    }
+
+    val retArr: Array[Int] = new Array[Int](len)
+    for (i <- 0 until len) {
+      retArr(i) = lArr(i) * rArr(i)
+    }
+    retArr
   }
 
 
