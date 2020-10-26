@@ -178,7 +178,9 @@ object Solutions {
     //    maxSlidingWindow(Array(1, 3, -1, -3, 5, 3, 6, 7), 2).foreach(println)
     //    println(searchMatrix(Array(Array(1, 4, 7, 11, 15), Array(2, 5, 8, 12, 19), Array(3, 6, 9, 16, 22), Array(10, 13, 14, 17, 24), Array(18, 21, 23, 26, 30)), 5))
     //    println(searchMatrix(Array(Array(-1, 3)), 1))
-    println(numSquares(7))
+    //    println(numSquares(7))
+    //    println(twoSum(Array(2, 7, 11, 15), 9))
+    println(longestPalindrome("bb"))
   }
 
   /*
@@ -197,10 +199,13 @@ object Solutions {
 所以返回 [0, 1]
  */
   def twoSum(nums: Array[Int], target: Int): Array[Int] = {
-    for (i <- 0 until nums.length; j <- i + 1 until nums.length) {
-      if (nums(i) + nums(j) == target) {
-        return Array(i, j)
+    import scala.collection.mutable
+    val map: mutable.Map[Int, Int] = mutable.Map[Int, Int]()
+    for (i <- 0 until nums.length) {
+      if (map.contains(target - nums(i))) {
+        return Array(i, map(target - nums(i)))
       }
+      map.put(nums(i), i)
     }
     Array[Int]()
   }
@@ -232,23 +237,16 @@ object Solutions {
     var carry: Int = 0
 
     while (node1 != null || node2 != null) {
-      if (retNode == null) {
-        curNode = new ListNode
-        retNode = curNode
-      } else {
-        curNode.next = new ListNode()
-        curNode = curNode.next
-      }
-
       val x1 = if (node1 == null) 0 else node1.x
       val x2 = if (node2 == null) 0 else node2.x
       val sum = x1 + x2 + carry
-      if (sum / 10 > 0) {
-        carry = sum / 10
-        curNode.x = sum % 10
+      carry = sum / 10
+      if (retNode == null) {
+        retNode = new ListNode(sum % 10)
+        curNode = retNode
       } else {
-        carry = 0
-        curNode.x = sum
+        curNode.next = new ListNode(sum % 10)
+        curNode = curNode.next
       }
       node1 = if (node1 == null) null else node1.next
       node2 = if (node2 == null) null else node2.next
@@ -281,24 +279,25 @@ object Solutions {
      请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
    */
   def lengthOfLongestSubstring(s: String): Int = {
-    if (s.length == 1)
-      return 1
-    var latestLen = 0
-    import scala.util.control.Breaks
-    val loop = new Breaks
-    for (i <- 0 until s.length) {
-      loop.breakable {
-        for (j <- i + latestLen until s.length) {
-          val curStr = s.substring(i, j + 1)
-          if (curStr.length > latestLen && curStr.length == curStr.distinct.length) {
-            latestLen = curStr.length
-          } else {
-            loop.break()
-          }
-        }
+    if (s == null)
+      return 0
+    import scala.collection.mutable
+    val set: mutable.Set[Char] = mutable.Set[Char]()
+    val len = s.length
+    var maxLength = 0
+    var rk = 0
+    for (i <- 0 until len) {
+      if (i != 0) {
+        set.remove(s.charAt(i - 1))
       }
+      while (rk < len && !set.contains(s.charAt(rk))) {
+        set.add(s.charAt(rk))
+        rk += 1
+      }
+      maxLength = Math.max(maxLength, set.size)
+
     }
-    latestLen
+    maxLength
   }
 
   /*
@@ -383,33 +382,25 @@ nums2.length == n
 输出: "bb"
    */
   def longestPalindrome(s: String): String = {
-    var latestLength = 0
-    var latestStr = ""
-
-    for (i <- 0 until s.length) {
-      for (j <- i + latestLength until s.length) {
-        val curStr = s.substring(i, j + 1)
-        if (isPalindrome(curStr)) {
-          if (curStr.length > latestLength) {
-            latestStr = curStr
-            latestLength = curStr.length
-          }
+    val len = s.length
+    val dp: Array[Array[Boolean]] = Array.ofDim[Boolean](len, len)
+    var maxStr: String = ""
+    for (k <- 0 until len) {
+      for (i <- 0 until len; if (i + k) < len) {
+        val j = k + i
+        if (k == 0) {
+          dp(i)(j) = true
+        } else if (k == 1) {
+          dp(i)(j) = s.charAt(i) == s.charAt(j)
+        } else {
+          dp(i)(j) = s.charAt(i) == s.charAt(j) && dp(i + 1)(j - 1)
+        }
+        if (dp(i)(j) && (k + 1) > maxStr.length) {
+          maxStr = s.substring(i, j + 1)
         }
       }
     }
-    latestStr
-  }
-
-  def isPalindrome(s: String): Boolean = {
-    for (i <- 0 until s.length) {
-      if (i >= s.length - i - 1) {
-        return true
-      }
-      if (s.charAt(i) != s.charAt(s.length - i - 1)) {
-        return false
-      }
-    }
-    false
+    maxStr
   }
 
   /*
