@@ -177,7 +177,8 @@ object Solutions {
     //    println(Range(3, -1, -1).map(println))
     //    maxSlidingWindow(Array(1, 3, -1, -3, 5, 3, 6, 7), 2).foreach(println)
     //    println(searchMatrix(Array(Array(1, 4, 7, 11, 15), Array(2, 5, 8, 12, 19), Array(3, 6, 9, 16, 22), Array(10, 13, 14, 17, 24), Array(18, 21, 23, 26, 30)), 5))
-    println(searchMatrix(Array(Array(-1, 3)), 1))
+    //    println(searchMatrix(Array(Array(-1, 3)), 1))
+    println(numSquares(7))
   }
 
   /*
@@ -3481,22 +3482,32 @@ p、q 为不同节点且均存在于给定的二叉树中。
     false
   }
 
-  def dfsSearch(arr: Array[Int], i: Int, j: Int, target: Int): Boolean = {
-    if (arr(i) > target)
-      return false
-    if (arr(arr.length - 1) < target)
-      return false
-    if (i == j) {
-      return arr(i) == target
-    }
 
-    val mid = (i + j) / 2
-    if (arr(mid) == target)
-      return true
-    else if (arr(mid) < target) {
-      dfsSearch(arr, mid + 1, j, target)
-    } else {
-      dfsSearch(arr, i, mid - 1, target)
+  /*
+  279. 完全平方数
+给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, ...）使得它们的和等于 n。你需要让组成和的完全平方数的个数最少。
+
+示例 1:
+
+输入: n = 12
+输出: 3
+解释: 12 = 4 + 4 + 4.
+示例 2:
+
+输入: n = 13
+输出: 2
+解释: 13 = 4 + 9.
+   */
+  def numSquares(n: Int): Int = {
+    val dp: Array[Int] = new Array[Int](n + 1)
+    for (i <- 1 to n) {
+      dp(i) = i
+      var j = 1
+      while (i - j * j >= 0) {
+        dp(i) = Math.min(dp(i), dp(i - j * j) + 1)
+        j += 1
+      }
     }
+    dp(n)
   }
 }
