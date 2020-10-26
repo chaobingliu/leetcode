@@ -175,7 +175,9 @@ object Solutions {
     //    //    C.right = H
     //    println(lowestCommonAncestor2(A, B, A).value)
     //    println(Range(3, -1, -1).map(println))
-    maxSlidingWindow(Array(1, 3, -1, -3, 5, 3, 6, 7), 2).foreach(println)
+    //    maxSlidingWindow(Array(1, 3, -1, -3, 5, 3, 6, 7), 2).foreach(println)
+    //    println(searchMatrix(Array(Array(1, 4, 7, 11, 15), Array(2, 5, 8, 12, 19), Array(3, 6, 9, 16, 22), Array(10, 13, 14, 17, 24), Array(18, 21, 23, 26, 30)), 5))
+    println(searchMatrix(Array(Array(-1, 3)), 1))
   }
 
   /*
@@ -3412,10 +3414,89 @@ p、q 为不同节点且均存在于给定的二叉树中。
 
     val retArr: Array[Int] = new Array[Int](len - k + 1)
     retArr(0) = nums.slice(0, k).max
-    for (i <- 0 to len-k) {
-      retArr(i) = Math.max(leftMax(i+k-1), rightMax(i))
+    for (i <- 0 to len - k) {
+      retArr(i) = Math.max(leftMax(i + k - 1), rightMax(i))
     }
     retArr
   }
 
+  /*
+  240. 搜索二维矩阵 II
+编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target。该矩阵具有以下特性：
+
+每行的元素从左到右升序排列。
+每列的元素从上到下升序排列。
+示例:
+
+现有矩阵 matrix 如下：
+
+[
+  [1,   4,  7, 11, 15],
+  [2,   5,  8, 12, 19],
+  [3,   6,  9, 16, 22],
+  [10, 13, 14, 17, 24],
+  [18, 21, 23, 26, 30]
+]
+给定 target = 5，返回 true。
+
+给定 target = 20，返回 false。
+
+   */
+  def searchMatrix(matrix: Array[Array[Int]], target: Int): Boolean = {
+    if (matrix == null || matrix.isEmpty || matrix(0).isEmpty)
+      return false
+    val len = Math.min(matrix.length, matrix(0).length)
+    for (i <- 0 until len) {
+      val rowSearch = dfsSearch(matrix, i, target, false)
+      val colSearch = dfsSearch(matrix, i, target, true)
+      if (rowSearch || colSearch)
+        return true
+    }
+    false
+  }
+
+  def dfsSearch(matrix: Array[Array[Int]], idx: Int, target: Int, vertical: Boolean): Boolean = {
+    var start = idx
+    var end = if (vertical) matrix(0).length - 1 else matrix.length - 1
+    while (start <= end) {
+      val mid = (start + end) / 2
+      if (vertical) {
+        if (matrix(idx)(mid) < target) {
+          start = mid + 1
+        } else if (matrix(idx)(mid) > target) {
+          end = mid - 1
+        } else {
+          return true
+        }
+      } else {
+        if (matrix(mid)(idx) < target) {
+          start = mid + 1
+        } else if (matrix(mid)(idx) > target) {
+          end = mid - 1
+        } else {
+          return true
+        }
+      }
+    }
+    false
+  }
+
+  def dfsSearch(arr: Array[Int], i: Int, j: Int, target: Int): Boolean = {
+    if (arr(i) > target)
+      return false
+    if (arr(arr.length - 1) < target)
+      return false
+    if (i == j) {
+      return arr(i) == target
+    }
+
+    val mid = (i + j) / 2
+    if (arr(mid) == target)
+      return true
+    else if (arr(mid) < target) {
+      dfsSearch(arr, mid + 1, j, target)
+    } else {
+      dfsSearch(arr, i, mid - 1, target)
+    }
+  }
 }
