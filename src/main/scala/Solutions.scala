@@ -182,7 +182,8 @@ object Solutions {
     //    println(twoSum(Array(2, 7, 11, 15), 9))
     //    println(longestPalindrome("bb"))
     //    println(lengthOfLIS(Array(4, 10, 4, 3, 8, 9)))
-    removeInvalidParentheses(")(").foreach(println)
+//    removeInvalidParentheses(")(").foreach(println)
+    println(findMedianSortedArrays(Array(2), Array()))
   }
 
   /*
@@ -345,28 +346,34 @@ nums2.length == n
 
    */
   def findMedianSortedArrays(nums1: Array[Int], nums2: Array[Int]): Double = {
-    val len = nums1.length + nums2.length
-    val intArr: Array[Int] = new Array[Int](len)
-    var i1: Int = 0
-    var i2: Int = 0
-    for (j <- 0 until intArr.length) {
-      val num1: Int = if (i1 < nums1.length) nums1(i1) else Int.MaxValue
-      val num2: Int = if (i2 < nums2.length) nums2(i2) else Int.MaxValue
-      if (num1 < num2) {
-        intArr(j) = num1
-        i1 += 1
-      } else {
-        intArr(j) = num2
-        i2 += 1
-      }
+    val m = nums1.length
+    val n = nums2.length
+    if (m > n) {
+      return findMedianSortedArrays(nums2, nums1)
     }
 
-    if (len % 2 == 1) {
-      intArr(len / 2)
-    } else {
-      val m = len / 2
-      (intArr(m - 1) + intArr(m)) / 2.0
+    var left = 0
+    var right = m
+    var median1, median2 = 0
+
+    while (left <= right) {
+      val i = (left + right) / 2
+      val j = (m + n + 1) / 2 - i
+
+      val leftMin = if (i == 0) Int.MinValue else nums1(i - 1)
+      val leftMax = if (i == m) Int.MaxValue else nums1(i)
+      val rightMin = if (j == 0) Int.MinValue else nums2(j - 1)
+      val rightMax = if (j == n) Int.MaxValue else nums2(j)
+
+      if (leftMin <= rightMax) {
+        median1 = Math.max(leftMin, rightMin)
+        median2 = Math.min(leftMax, rightMax)
+        left = i + 1
+      } else {
+        right = i - 1
+      }
     }
+    if ((m + n) % 2 == 0) (median1 + median2) / 2.0 else median1
   }
 
   /*
