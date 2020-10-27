@@ -181,7 +181,8 @@ object Solutions {
     //    println(numSquares(7))
     //    println(twoSum(Array(2, 7, 11, 15), 9))
     //    println(longestPalindrome("bb"))
-    println(lengthOfLIS(Array(4, 10, 4, 3, 8, 9)))
+    //    println(lengthOfLIS(Array(4, 10, 4, 3, 8, 9)))
+    removeInvalidParentheses(")(").foreach(println)
   }
 
   /*
@@ -3596,27 +3597,67 @@ p、q 为不同节点且均存在于给定的二叉树中。
   }
 
   /*
-  301. 删除无效的括号
-删除最小数量的无效括号，使得输入的字符串有效，返回所有可能的结果。
+    301. 删除无效的括号
+  删除最小数量的无效括号，使得输入的字符串有效，返回所有可能的结果。
 
-说明: 输入可能包含了除 ( 和 ) 以外的字符。
+  说明: 输入可能包含了除 ( 和 ) 以外的字符。
 
-示例 1:
+  示例 1:
 
-输入: "()())()"
-输出: ["()()()", "(())()"]
-示例 2:
+  输入: "()())()"
+  输出: ["()()()", "(())()"]
+  示例 2:
 
-输入: "(a)())()"
-输出: ["(a)()()", "(a())()"]
-示例 3:
+  输入: "(a)())()"
+  输出: ["(a)()()", "(a())()"]
+  示例 3:
 
-输入: ")("
-输出: [""]
-   */
+  输入: ")("
+  输出: [""]
+     */
   def removeInvalidParentheses(s: String): List[String] = {
-    null
+    var left = 0
+    var right = 0
+    val set: mutable.Set[String] = mutable.Set[String]()
+    for (c <- s) {
+      if (c == '(') {
+        left += 1
+      } else if (c == ')') {
+        right = if (left == 0) right + 1 else right
+        left = if (left > 0) left - 1 else left
+      }
+    }
+    recurse(s, 0, 0, 0, left, right, new mutable.StringBuilder(), set)
+    set.toList
   }
+
+  def recurse(s: String, index: Int, leftCount: Int, rightCount: Int, leftRem: Int, rightRem: Int, builder: StringBuilder, set: mutable.Set[String]) {
+    if (index == s.length) {
+      if (leftRem == 0 && rightRem == 0) {
+        set.add(builder.toString())
+      }
+    } else {
+
+      val c = s.charAt(index)
+      val len = builder.length
+
+      if ((c == '(' && leftRem > 0) || (c == ')' && rightRem > 0)) {
+        recurse(s, index + 1, leftCount, rightCount, leftRem - (if (c == '(') 1 else 0), rightRem - (if (c == ')') 1 else 0), builder, set)
+
+      }
+      builder.append(c)
+
+      if (c != '(' && c != ')') {
+        recurse(s, index + 1, leftCount, rightCount, leftRem, rightRem, builder, set)
+      } else if (c == '(') {
+        recurse(s, index + 1, leftCount + 1, rightCount, leftRem, rightRem, builder, set)
+      } else if (rightCount < leftCount) {
+        recurse(s, index + 1, leftCount, rightCount + 1, leftRem, rightRem, builder, set)
+      }
+      builder.deleteCharAt(len)
+    }
+  }
+
 
   /*
   309. 最佳买卖股票时机含冷冻期
