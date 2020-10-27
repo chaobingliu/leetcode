@@ -3632,7 +3632,7 @@ p、q 为不同节点且均存在于给定的二叉树中。
 输出: 3
 解释: 对应的交易状态为: [买入, 卖出, 冷冻期, 买入, 卖出]
    */
-  def maxProfit2(prices: Array[Int]): Int = {
+  def maxProfit3(prices: Array[Int]): Int = {
     if (prices == null || prices.isEmpty)
       return 0
     val len = prices.length
