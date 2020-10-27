@@ -180,7 +180,8 @@ object Solutions {
     //    println(searchMatrix(Array(Array(-1, 3)), 1))
     //    println(numSquares(7))
     //    println(twoSum(Array(2, 7, 11, 15), 9))
-    println(longestPalindrome("bb"))
+    //    println(longestPalindrome("bb"))
+    println(lengthOfLIS(Array(4, 10, 4, 3, 8, 9)))
   }
 
   /*
@@ -3559,5 +3560,38 @@ p、q 为不同节点且均存在于给定的二叉树中。
       fast = nums(fast)
     }
     slow
+  }
+
+  /*
+  300. 最长上升子序列
+给定一个无序的整数数组，找到其中最长上升子序列的长度。
+
+示例:
+
+输入: [10,9,2,5,3,7,101,18]
+输出: 4
+解释: 最长的上升子序列是 [2,3,7,101]，它的长度是 4。
+说明:
+
+可能会有多种最长上升子序列的组合，你只需要输出对应的长度即可。
+你算法的时间复杂度应该为 O(n2) 。
+进阶: 你能将算法的时间复杂度降低到 O(n log n) 吗?
+   */
+  def lengthOfLIS(nums: Array[Int]): Int = {
+    if (nums == null || nums.isEmpty)
+      return 0
+    val dp: Array[Int] = new Array[Int](nums.length)
+    dp(0) = 1
+    var maxLen = 1
+    for (i <- 1 until nums.length) {
+      dp(i) = 1
+      for (j <- 0 until i) {
+        if (nums(i) > nums(j)) {
+          dp(i) = Math.max(dp(i), dp(j) + 1)
+        }
+      }
+      maxLen = Math.max(maxLen, dp(i))
+    }
+    maxLen
   }
 }
