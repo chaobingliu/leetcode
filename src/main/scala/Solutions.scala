@@ -1,3 +1,5 @@
+
+
 object Solutions {
   def main(args: Array[String]): Unit = {
     //    println("abc".last)
@@ -185,7 +187,9 @@ object Solutions {
     //    removeInvalidParentheses(")(").foreach(println)
     //    println(findMedianSortedArrays(Array(2), Array()))
     //    println(maxCoins(Array(3, 1, 5, 8)))
-    println(coinChange(Array(1, 2, 5), 11))
+    //    println(coinChange(Array(1, 2, 5), 11))
+    //    countBits(5).foreach(println)
+    topKFrequent(Array(4, 1, -1, 2, -1, 2, 3), 2).foreach(println)
   }
 
   /*
@@ -204,7 +208,6 @@ object Solutions {
 所以返回 [0, 1]
  */
   def twoSum(nums: Array[Int], target: Int): Array[Int] = {
-    import scala.collection.mutable
     val map: mutable.Map[Int, Int] = mutable.Map[Int, Int]()
     for (i <- 0 until nums.length) {
       if (map.contains(target - nums(i))) {
@@ -560,8 +563,7 @@ p = "mis*is*p*."
 
    */
   def threeSum(nums: Array[Int]): List[List[Int]] = {
-    import scala.collection.mutable.ListBuffer
-    import scala.util.control.Breaks
+    import scala.collection.mutable
     val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
     val newNums = nums.sorted
     val loop = new Breaks
@@ -605,6 +607,7 @@ p = "mis*is*p*."
    */
   def letterCombinations(digits: String): List[String] = {
     import scala.collection.mutable.ListBuffer
+    import scala.util.control.Breaks
     val maps = Map[Char, Array[String]](
       '1' -> Array[String]("!", "@", "#"), '2' -> Array[String]("a", "b", "c"), '3' -> Array[String]("d", "e", "f"),
       '4' -> Array[String]("g", "h", "i"), '5' -> Array[String]("j", "k", "l"), '6' -> Array[String]("m", "n", "o"),
@@ -712,7 +715,7 @@ p = "mis*is*p*."
     if (s.length % 2 == 1) {
       return false
     }
-    import scala.collection.mutable
+    import scala.collection.mutable.ListBuffer
     val map = Map((')', '('), (']', '['), ('}', '{'))
     val stack = mutable.Stack[Char]()
     for (c <- s) {
@@ -799,7 +802,7 @@ p = "mis*is*p*."
     if (n == 0) {
       List[String]()
     } else {
-      import scala.collection.mutable.ListBuffer
+      import scala.collection.mutable
       val arr = new Array[ListBuffer[String]](n)
       arr(0) = ListBuffer("()")
       for (i <- 1 until n) {
@@ -963,7 +966,7 @@ lists[i].length 的总和不超过 10^4
 
   // 最传统的方法，效率极差，非常不推荐使用
   def longestValidParentheses2(s: String): Int = {
-    import scala.util.control.Breaks
+    import scala.collection.mutable.ListBuffer
     var maxValid = 0
     val loop = new Breaks
     for (i <- 0 until s.length; if (s.charAt(i) == '(')) {
@@ -1138,7 +1141,7 @@ candidate 中的每个元素都是独一无二的。
 1 <= target <= 500
    */
 
-  import scala.collection.mutable.ListBuffer
+  import scala.util.control.Breaks
 
   def combinationSum(candidates: Array[Int], target: Int): List[List[Int]] = {
     val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
@@ -1320,7 +1323,6 @@ candidate 中的每个元素都是独一无二的。
     if (len == 0) {
       return List[List[String]]()
     }
-    import scala.collection.mutable
     import scala.collection.mutable.ListBuffer
     val buffer: ListBuffer[List[String]] = new ListBuffer[List[String]]()
     val map: mutable.Map[String, List[String]] = mutable.Map[String, List[String]]()
@@ -1428,8 +1430,8 @@ candidate 中的每个元素都是独一无二的。
 intervals[i][0] <= intervals[i][1]
    */
   def merge(intervals: Array[Array[Int]]): Array[Array[Int]] = {
+    import scala.collection.mutable
     import scala.collection.mutable.ListBuffer
-    import scala.util.control.Breaks
     val buffer: ListBuffer[Array[Int]] = new ListBuffer[Array[Int]]()
     val loop = new Breaks
     val ccc = intervals.sortWith((A, B) => A(0) < B(0))
@@ -1862,7 +1864,8 @@ board 和 word 中只包含大写和小写英文字母。
     if (len == 1)
       return heights(0)
 
-    import scala.collection.mutable
+    import scala.collection.mutable.ListBuffer
+    import scala.util.control.Breaks
     val stack: mutable.Stack[Int] = new mutable.Stack[Int]()
     var max = 0
 
@@ -1982,7 +1985,6 @@ board 和 word 中只包含大写和小写英文字母。
    */
   def inorderTraversal(root: TreeNode): List[Int] = {
     import scala.collection.mutable
-    import scala.collection.mutable.ListBuffer
 
     val buffer: ListBuffer[Int] = new ListBuffer[Int]()
     val stack = new mutable.Stack[TreeNode]()
@@ -2089,6 +2091,7 @@ board 和 word 中只包含大写和小写英文字母。
    */
   def isValidBST(root: TreeNode): Boolean = {
     import scala.collection.mutable
+    import scala.collection.mutable.ListBuffer
     var curNode = root
     val stack: mutable.Stack[TreeNode] = new mutable.Stack[TreeNode]()
     var inOrder: Double = Double.MinValue
@@ -2183,7 +2186,6 @@ board 和 word 中只包含大写和小写英文字母。
    */
   def levelOrder(root: TreeNode): List[List[Int]] = {
     import scala.collection.mutable
-    import scala.collection.mutable.ListBuffer
     val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
     val queue: mutable.Queue[TreeNode] = new mutable.Queue[TreeNode]()
     if (root != null) {
@@ -2238,6 +2240,7 @@ board 和 word 中只包含大写和小写英文字母。
       return 0
     }
     import scala.collection.mutable
+    import scala.collection.mutable.ListBuffer
     var curNode: TreeNode = null
     var maxLength = 0
     val queue: mutable.Queue[TreeNode] = new mutable.Queue[TreeNode]()
@@ -2341,7 +2344,7 @@ board 和 word 中只包含大写和小写英文字母。
           6
    */
 
-  import scala.collection.mutable.ListBuffer
+  import scala.collection.mutable
 
   def flatten(root: TreeNode): Unit = {
     val buffer: ListBuffer[TreeNode] = new ListBuffer[TreeNode]()
@@ -3020,7 +3023,6 @@ grid[i][j] 的值为 '0' 或 '1'
 1 <= numCourses <= 10^5
    */
   def canFinish(numCourses: Int, prerequisites: Array[Array[Int]]): Boolean = {
-    import scala.collection.mutable
     import scala.collection.mutable.ListBuffer
     val edges: Array[ListBuffer[Int]] = new Array[ListBuffer[Int]](numCourses)
     val inedge: Array[Int] = new Array[Int](numCourses)
@@ -3071,7 +3073,8 @@ grid[i][j] 的值为 '0' 或 '1'
 你可以假设 k 总是有效的，且 1 ≤ k ≤ 数组的长度。
    */
 
-  import scala.util.Random
+  import scala.collection.mutable
+  import scala.collection.mutable.ListBuffer
 
   def findKthLargest(nums: Array[Int], k: Int): Int = {
     //    nums.sorted.reverse(k - 1)
@@ -3846,5 +3849,70 @@ p、q 为不同节点且均存在于给定的二叉树中。
     selectedMap.put(node, node.value + nonselectedMap.getOrElse(node.left, 0) + nonselectedMap.getOrElse(node.right, 0))
     nonselectedMap.put(node, Math.max(selectedMap.getOrElse(node.left, 0), nonselectedMap.getOrElse(node.left, 0)) +
       Math.max(selectedMap.getOrElse(node.right, 0), nonselectedMap.getOrElse(node.right, 0)))
+  }
+
+  /*
+  338. 比特位计数
+给定一个非负整数 num。对于 0 ≤ i ≤ num 范围中的每个数字 i ，计算其二进制数中的 1 的数目并将它们作为数组返回。
+
+示例 1:
+
+输入: 2
+输出: [0,1,1]
+示例 2:
+
+输入: 5
+输出: [0,1,1,2,1,2]
+进阶:
+
+给出时间复杂度为O(n*sizeof(integer))的解答非常容易。但你可以在线性时间O(n)内用一趟扫描做到吗？
+要求算法的空间复杂度为O(n)。
+你能进一步完善解法吗？要求在C++或任何其他语言中不使用任何内置函数（如 C++ 中的 __builtin_popcount）来执行此操作。
+
+   */
+  def countBits(num: Int): Array[Int] = {
+    val retArr: Array[Int] = new Array[Int](num + 1)
+    retArr(0) = 0
+    for (i <- 1 to num) {
+      retArr(i) = retArr(i >> 1) + (i & 1)
+    }
+    retArr
+  }
+
+  /*
+  347. 前 K 个高频元素
+给定一个非空的整数数组，返回其中出现频率前 k 高的元素。
+
+
+
+示例 1:
+
+输入: nums = [1,1,1,2,2,3], k = 2
+输出: [1,2]
+示例 2:
+
+输入: nums = [1], k = 1
+输出: [1]
+
+
+提示：
+
+你可以假设给定的 k 总是合理的，且 1 ≤ k ≤ 数组中不相同的元素的个数。
+你的算法的时间复杂度必须优于 O(n log n) , n 是数组的大小。
+题目数据保证答案唯一，换句话说，数组中前 k 个高频元素的集合是唯一的。
+你可以按任意顺序返回答案。
+   */
+  def topKFrequent(nums: Array[Int], k: Int): Array[Int] = {
+    val map: mutable.Map[Int, Int] = mutable.Map[Int, Int]()
+    for (n <- nums) {
+      map.put(n, map.getOrElse(n, 0) + 1)
+    }
+
+    val retList = map.toList.sortBy(-_._2)
+    val retArr: Array[Int] = new Array[Int](k)
+    for (i <- 0 until k) {
+      retArr(i) = retList(i)._1
+    }
+    retArr
   }
 }
