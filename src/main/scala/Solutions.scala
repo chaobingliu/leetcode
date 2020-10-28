@@ -182,8 +182,10 @@ object Solutions {
     //    println(twoSum(Array(2, 7, 11, 15), 9))
     //    println(longestPalindrome("bb"))
     //    println(lengthOfLIS(Array(4, 10, 4, 3, 8, 9)))
-//    removeInvalidParentheses(")(").foreach(println)
-    println(findMedianSortedArrays(Array(2), Array()))
+    //    removeInvalidParentheses(")(").foreach(println)
+    //    println(findMedianSortedArrays(Array(2), Array()))
+    //    println(maxCoins(Array(3, 1, 5, 8)))
+    println(coinChange(Array(1, 2, 5), 11))
   }
 
   /*
@@ -3699,5 +3701,98 @@ p、q 为不同节点且均存在于给定的二叉树中。
     }
 
     Math.max(arr(len - 1)(0), Math.max(arr(len - 1)(1), arr(len - 1)(2)))
+  }
+
+  /*
+  312. 戳气球
+有 n 个气球，编号为0 到 n-1，每个气球上都标有一个数字，这些数字存在数组 nums 中。
+
+现在要求你戳破所有的气球。如果你戳破气球 i ，就可以获得 nums[left] * nums[i] * nums[right] 个硬币。 这里的 left 和 right 代表和 i 相邻的两个气球的序号。注意当你戳破了气球 i 后，气球 left 和气球 right 就变成了相邻的气球。
+
+求所能获得硬币的最大数量。
+
+说明:
+
+你可以假设 nums[-1] = nums[n] = 1，但注意它们不是真实存在的所以并不能被戳破。
+0 ≤ n ≤ 500, 0 ≤ nums[i] ≤ 100
+示例:
+
+输入: [3,1,5,8]
+输出: 167
+解释: nums = [3,1,5,8] --> [3,5,8] -->   [3,8]   -->  [8]  --> []
+     coins =  3*1*5      +  3*5*8    +  1*3*8      + 1*8*1   = 167
+   */
+  def maxCoins(nums: Array[Int]): Int = {
+    if (nums == null || nums.length == 0)
+      return 0
+    val n = nums.length
+    val newNums: Array[Int] = new Array[Int](n + 2)
+    newNums(0) = 1
+    newNums(n + 1) = 1
+    for (i <- 1 to n) {
+      newNums(i) = nums(i - 1)
+    }
+
+    val dp: Array[Array[Int]] = Array.ofDim[Int](n + 2, n + 2)
+    for (i <- Range(n, -1, -1)) {
+      for (j <- i + 1 until n + 2) {
+        for (k <- i + 1 until j) {
+          dp(i)(j) = Math.max(dp(i)(j), dp(i)(k) + dp(k)(j) + newNums(i) * newNums(k) * newNums(j))
+        }
+      }
+    }
+    dp(0)(n + 1)
+  }
+
+  /*
+  322. 零钱兑换
+给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。
+
+你可以认为每种硬币的数量是无限的。
+
+
+
+示例 1：
+
+输入：coins = [1, 2, 5], amount = 11
+输出：3
+解释：11 = 5 + 5 + 1
+示例 2：
+
+输入：coins = [2], amount = 3
+输出：-1
+示例 3：
+
+输入：coins = [1], amount = 0
+输出：0
+示例 4：
+
+输入：coins = [1], amount = 1
+输出：1
+示例 5：
+
+输入：coins = [1], amount = 2
+输出：2
+
+
+提示：
+
+1 <= coins.length <= 12
+1 <= coins[i] <= 231 - 1
+0 <= amount <= 104
+   */
+  def coinChange(coins: Array[Int], amount: Int): Int = {
+    if (amount < 0)
+      return 0
+    val dp: Array[Int] = Array.fill(amount + 1)(amount + 1)
+    dp(0) = 0
+    for (i <- 1 to amount) {
+      for (j <- 0 until coins.length) {
+        if (coins(j) <= i) {
+          dp(i) = Math.min(dp(i), dp(i - coins(j)) + 1)
+        }
+      }
+    }
+    if (dp(amount) > amount) -1 else dp(amount)
   }
 }
