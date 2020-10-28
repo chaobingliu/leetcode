@@ -1,3 +1,7 @@
+import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
+import scala.util.Random
+import scala.util.control.Breaks
 
 
 object Solutions {
@@ -189,7 +193,8 @@ object Solutions {
     //    println(maxCoins(Array(3, 1, 5, 8)))
     //    println(coinChange(Array(1, 2, 5), 11))
     //    countBits(5).foreach(println)
-    topKFrequent(Array(4, 1, -1, 2, -1, 2, 3), 2).foreach(println)
+    //    topKFrequent(Array(4, 1, -1, 2, -1, 2, 3), 2).foreach(println)
+    println(decodeString("3[z]2[2[y]pq4[2[jk]e1[f]]]ef"))
   }
 
   /*
@@ -289,7 +294,6 @@ object Solutions {
   def lengthOfLongestSubstring(s: String): Int = {
     if (s == null)
       return 0
-    import scala.collection.mutable
     val set: mutable.Set[Char] = mutable.Set[Char]()
     val len = s.length
     var maxLength = 0
@@ -563,7 +567,6 @@ p = "mis*is*p*."
 
    */
   def threeSum(nums: Array[Int]): List[List[Int]] = {
-    import scala.collection.mutable
     val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
     val newNums = nums.sorted
     val loop = new Breaks
@@ -606,8 +609,6 @@ p = "mis*is*p*."
   尽管上面的答案是按字典序排列的，但是你可以任意选择答案输出的顺序。
    */
   def letterCombinations(digits: String): List[String] = {
-    import scala.collection.mutable.ListBuffer
-    import scala.util.control.Breaks
     val maps = Map[Char, Array[String]](
       '1' -> Array[String]("!", "@", "#"), '2' -> Array[String]("a", "b", "c"), '3' -> Array[String]("d", "e", "f"),
       '4' -> Array[String]("g", "h", "i"), '5' -> Array[String]("j", "k", "l"), '6' -> Array[String]("m", "n", "o"),
@@ -646,7 +647,6 @@ p = "mis*is*p*."
   你能尝试使用一趟扫描实现吗？
    */
   def removeNthFromEnd(head: ListNode, n: Int): ListNode = {
-    import scala.collection.mutable.ListBuffer
     var node = head
     val buffer: ListBuffer[ListNode] = new ListBuffer[ListNode]()
 
@@ -715,7 +715,6 @@ p = "mis*is*p*."
     if (s.length % 2 == 1) {
       return false
     }
-    import scala.collection.mutable.ListBuffer
     val map = Map((')', '('), (']', '['), ('}', '{'))
     val stack = mutable.Stack[Char]()
     for (c <- s) {
@@ -802,7 +801,6 @@ p = "mis*is*p*."
     if (n == 0) {
       List[String]()
     } else {
-      import scala.collection.mutable
       val arr = new Array[ListBuffer[String]](n)
       arr(0) = ListBuffer("()")
       for (i <- 1 until n) {
@@ -966,7 +964,6 @@ lists[i].length 的总和不超过 10^4
 
   // 最传统的方法，效率极差，非常不推荐使用
   def longestValidParentheses2(s: String): Int = {
-    import scala.collection.mutable.ListBuffer
     var maxValid = 0
     val loop = new Breaks
     for (i <- 0 until s.length; if (s.charAt(i) == '(')) {
@@ -1140,8 +1137,6 @@ candidates 中的数字可以无限制重复被选取。
 candidate 中的每个元素都是独一无二的。
 1 <= target <= 500
    */
-
-  import scala.util.control.Breaks
 
   def combinationSum(candidates: Array[Int], target: Int): List[List[Int]] = {
     val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
@@ -1323,7 +1318,6 @@ candidate 中的每个元素都是独一无二的。
     if (len == 0) {
       return List[List[String]]()
     }
-    import scala.collection.mutable.ListBuffer
     val buffer: ListBuffer[List[String]] = new ListBuffer[List[String]]()
     val map: mutable.Map[String, List[String]] = mutable.Map[String, List[String]]()
 
@@ -1430,8 +1424,6 @@ candidate 中的每个元素都是独一无二的。
 intervals[i][0] <= intervals[i][1]
    */
   def merge(intervals: Array[Array[Int]]): Array[Array[Int]] = {
-    import scala.collection.mutable
-    import scala.collection.mutable.ListBuffer
     val buffer: ListBuffer[Array[Int]] = new ListBuffer[Array[Int]]()
     val loop = new Breaks
     val ccc = intervals.sortWith((A, B) => A(0) < B(0))
@@ -1864,8 +1856,6 @@ board 和 word 中只包含大写和小写英文字母。
     if (len == 1)
       return heights(0)
 
-    import scala.collection.mutable.ListBuffer
-    import scala.util.control.Breaks
     val stack: mutable.Stack[Int] = new mutable.Stack[Int]()
     var max = 0
 
@@ -1984,7 +1974,6 @@ board 和 word 中只包含大写和小写英文字母。
 进阶: 递归算法很简单，你可以通过迭代算法完成吗？
    */
   def inorderTraversal(root: TreeNode): List[Int] = {
-    import scala.collection.mutable
 
     val buffer: ListBuffer[Int] = new ListBuffer[Int]()
     val stack = new mutable.Stack[TreeNode]()
@@ -2090,8 +2079,6 @@ board 和 word 中只包含大写和小写英文字母。
      根节点的值为 5 ，但是其右子节点值为 4 。
    */
   def isValidBST(root: TreeNode): Boolean = {
-    import scala.collection.mutable
-    import scala.collection.mutable.ListBuffer
     var curNode = root
     val stack: mutable.Stack[TreeNode] = new mutable.Stack[TreeNode]()
     var inOrder: Double = Double.MinValue
@@ -2185,7 +2172,6 @@ board 和 word 中只包含大写和小写英文字母。
 ]
    */
   def levelOrder(root: TreeNode): List[List[Int]] = {
-    import scala.collection.mutable
     val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
     val queue: mutable.Queue[TreeNode] = new mutable.Queue[TreeNode]()
     if (root != null) {
@@ -2239,8 +2225,6 @@ board 和 word 中只包含大写和小写英文字母。
     if (root == null) {
       return 0
     }
-    import scala.collection.mutable
-    import scala.collection.mutable.ListBuffer
     var curNode: TreeNode = null
     var maxLength = 0
     val queue: mutable.Queue[TreeNode] = new mutable.Queue[TreeNode]()
@@ -2280,8 +2264,6 @@ board 和 word 中只包含大写和小写英文字母。
       /  \
      15   7
      */
-
-  import scala.collection.mutable
 
   def buildTree(preorder: Array[Int], inorder: Array[Int]): TreeNode = {
     val n = preorder.length
@@ -2343,8 +2325,6 @@ board 和 word 中只包含大写和小写英文字母。
          \
           6
    */
-
-  import scala.collection.mutable
 
   def flatten(root: TreeNode): Unit = {
     val buffer: ListBuffer[TreeNode] = new ListBuffer[TreeNode]()
@@ -2609,7 +2589,6 @@ pos 为 -1 或者链表中的一个 有效索引 。
   }
 
   def hasCycle2(head: ListNode): Boolean = {
-    import scala.collection.mutable.ListBuffer
     var curNode = head
     val buffer: ListBuffer[ListNode] = new ListBuffer[ListNode]()
     while (curNode != null) {
@@ -3023,7 +3002,6 @@ grid[i][j] 的值为 '0' 或 '1'
 1 <= numCourses <= 10^5
    */
   def canFinish(numCourses: Int, prerequisites: Array[Array[Int]]): Boolean = {
-    import scala.collection.mutable.ListBuffer
     val edges: Array[ListBuffer[Int]] = new Array[ListBuffer[Int]](numCourses)
     val inedge: Array[Int] = new Array[Int](numCourses)
     for (i <- 0 until numCourses) {
@@ -3072,9 +3050,6 @@ grid[i][j] 的值为 '0' 或 '1'
 
 你可以假设 k 总是有效的，且 1 ≤ k ≤ 数组的长度。
    */
-
-  import scala.collection.mutable
-  import scala.collection.mutable.ListBuffer
 
   def findKthLargest(nums: Array[Int], k: Int): Int = {
     //    nums.sorted.reverse(k - 1)
@@ -3914,5 +3889,85 @@ p、q 为不同节点且均存在于给定的二叉树中。
       retArr(i) = retList(i)._1
     }
     retArr
+  }
+
+
+  /*
+    394. 字符串解码
+  给定一个经过编码的字符串，返回它解码后的字符串。
+
+  编码规则为: k[encoded_string]，表示其中方括号内部的 encoded_string 正好重复 k 次。注意 k 保证为正整数。
+
+  你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+
+  此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 k ，例如不会出现像 3a 或 2[4] 的输入。
+
+
+
+  示例 1：
+
+  输入：s = "3[a]2[bc]"
+  输出："aaabcbc"
+  示例 2：
+
+  输入：s = "3[a2[c]]"
+  输出："accaccacc"
+  示例 3：
+
+  输入：s = "2[abc]3[cd]ef"
+  输出："abcabccdcdcdef"
+  示例 4：
+
+  输入：s = "abc3[cd]xyz"
+  输出："abccdcdcdxyz"
+     */
+  def decodeString(s: String): String = {
+    val stack = new mutable.Stack[String]()
+    var ptr: Int = 0
+    val retStr: StringBuilder = new StringBuilder
+    while (ptr < s.length) {
+      val c = s.charAt(ptr)
+      if (c.isDigit) {
+        val lastIdx: Int = getDigitIdx(s, ptr + 1)
+        stack.push(s.substring(ptr, lastIdx))
+        ptr = lastIdx
+      } else if (c.isLetter || c == '[') {
+        stack.push(c.toString)
+        ptr += 1
+      } else {
+        val buffer: ListBuffer[String] = new ListBuffer[String]()
+        while (stack.top != "[") {
+          buffer.append(stack.pop)
+        }
+        stack.pop()
+        val num: Int = stack.pop().toInt
+        val arr: Array[String] = Array.fill(num)(buffer.reduce(_ + _))
+        stack.push(arr.mkString(""))
+        ptr += 1
+      }
+    }
+    getString(stack, 1).reverse
+  }
+
+  def getDigitIdx(s: String, idx: Int): Int = {
+    for (i <- idx until s.length) {
+      if (!s.charAt(i).isDigit) {
+        return i
+      }
+    }
+    return s.length
+  }
+
+  def getString(stack: mutable.Stack[String], num: Int): String = {
+    val builder: StringBuilder = new StringBuilder()
+    while (!stack.isEmpty) {
+      builder.append(stack.pop())
+    }
+    val retBuilder: StringBuilder = new StringBuilder()
+    for (i <- 0 until num) {
+      retBuilder.append(builder)
+    }
+
+    retBuilder.toString()
   }
 }
