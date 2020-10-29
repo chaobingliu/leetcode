@@ -199,7 +199,8 @@ object Solutions {
     //    reconstructQueue(Array(Array(7, 0), Array(4, 4), Array(7, 1), Array(5, 0), Array(6, 1), Array(5, 2)))
     //    println(canPartition(Array(1, 2, 3, 4)))
     //    pathSum(new TreeNode(1), 1)
-    println(findAnagrams("baa", "aa"))
+    //    println(findAnagrams("baa", "aa"))
+    println(findDisappearedNumbers(Array(4, 3, 2, 7, 8, 2, 3, 1)))
   }
 
   /*
@@ -4250,5 +4251,38 @@ s: "abab" p: "ab"
       }
     }
     list.toList
+  }
+
+  /*
+  448. 找到所有数组中消失的数字
+给定一个范围在  1 ≤ a[i] ≤ n ( n = 数组大小 ) 的 整型数组，数组中的元素一些出现了两次，另一些只出现一次。
+
+找到所有在 [1, n] 范围之间没有出现在数组中的数字。
+
+您能在不使用额外空间且时间复杂度为O(n)的情况下完成这个任务吗? 你可以假定返回的数组不算在额外空间内。
+
+示例:
+
+输入:
+[4,3,2,7,8,2,3,1]
+
+输出:
+[5,6]
+   */
+  def findDisappearedNumbers(nums: Array[Int]): List[Int] = {
+    val buffer: ListBuffer[Int] = new ListBuffer[Int]()
+    for (i <- 0 until nums.length) {
+      val idx = Math.abs(nums(i)) - 1
+      if (nums(idx) > 0) {
+        nums(idx) *= -1
+      }
+    }
+
+    for (i <- 1 to nums.length) {
+      if (nums(i - 1) > 0) {
+        buffer.append(i)
+      }
+    }
+    buffer.toList
   }
 }
