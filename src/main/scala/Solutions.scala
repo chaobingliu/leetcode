@@ -194,7 +194,9 @@ object Solutions {
     //    println(coinChange(Array(1, 2, 5), 11))
     //    countBits(5).foreach(println)
     //    topKFrequent(Array(4, 1, -1, 2, -1, 2, 3), 2).foreach(println)
-    println(decodeString("3[z]2[2[y]pq4[2[jk]e1[f]]]ef"))
+    //    println(decodeString("3[z]2[2[y]pq4[2[jk]e1[f]]]ef"))
+    //    calcEquation(List(List("a", "b"), List("b", "c")), Array(2.0, 3.0), List(List("a", "c"), List("b", "a"), List("a", "e"), List("a", "a"))).foreach(println)
+    reconstructQueue(Array(Array(7, 0), Array(4, 4), Array(7, 1), Array(5, 0), Array(6, 1), Array(5, 2)))
   }
 
   /*
@@ -3969,5 +3971,114 @@ p、q 为不同节点且均存在于给定的二叉树中。
     }
 
     retBuilder.toString()
+  }
+
+  /*
+  399. 除法求值
+给出方程式 A / B = k, 其中 A 和 B 均为用字符串表示的变量， k 是一个浮点型数字。根据已知方程式求解问题，并返回计算结果。如果结果不存在，则返回 -1.0。
+
+输入总是有效的。你可以假设除法运算中不会出现除数为 0 的情况，且不存在任何矛盾的结果。
+
+
+
+示例 1：
+
+输入：equations = [["a","b"],["b","c"]], values = [2.0,3.0], queries = [["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]
+输出：[6.00000,0.50000,-1.00000,1.00000,-1.00000]
+解释：
+给定：a / b = 2.0, b / c = 3.0
+问题：a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ?
+返回：[6.0, 0.5, -1.0, 1.0, -1.0 ]
+示例 2：
+
+输入：equations = [["a","b"],["b","c"],["bc","cd"]], values = [1.5,2.5,5.0], queries = [["a","c"],["c","b"],["bc","cd"],["cd","bc"]]
+输出：[3.75000,0.40000,5.00000,0.20000]
+示例 3：
+
+输入：equations = [["a","b"]], values = [0.5], queries = [["a","b"],["b","a"],["a","c"],["x","y"]]
+输出：[0.50000,2.00000,-1.00000,-1.00000]
+
+
+提示：
+
+1 <= equations.length <= 20
+equations[i].length == 2
+1 <= equations[i][0].length, equations[i][1].length <= 5
+values.length == equations.length
+0.0 < values[i] <= 20.0
+1 <= queries.length <= 20
+queries[i].length == 2
+1 <= queries[i][0].length, queries[i][1].length <= 5
+equations[i][0], equations[i][1], queries[i][0], queries[i][1] 由小写英文字母与数字组成
+   */
+  def calcEquation(equations: List[List[String]], values: Array[Double], queries: List[List[String]]): Array[Double] = {
+    val mapP: mutable.Map[String, String] = mutable.Map[String, String]()
+    val mapD: mutable.Map[String, Double] = mutable.Map[String, Double]()
+
+    for (list <- equations) {
+      val a = list(0)
+      val b = list(1)
+      mapP(a) = a
+      mapP(b) = b
+      mapD(a) = 1
+      mapD(b) = 1
+    }
+
+    for (i <- 0 until equations.length) {
+      val a = equations(i)(0)
+      val b = equations(i)(1)
+
+      val ra = find(a, mapP, mapD)
+      mapP(ra) = b
+      mapD(ra) = values(i) / mapD(a)
+    }
+
+    val res: Array[Double] = new Array[Double](queries.length)
+    for (i <- 0 until queries.length) {
+      val a = queries(i)(0)
+      val b = queries(i)(1)
+      if (!mapP.contains(a) || !mapP.contains(b) || find(a, mapP, mapD) != find(b, mapP, mapD)) {
+        res(i) = -1
+      } else {
+        res(i) = (mapD(a) / mapD(b))
+      }
+    }
+    res
+  }
+
+  def find(x: String, mapP: mutable.Map[String, String], mapD: mutable.Map[String, Double]): String = {
+    if (mapP(x) != x) {
+      val t = find(mapP(x), mapP, mapD)
+      mapD(x) *= mapD(mapP(x))
+      mapP(x) = t
+    }
+    mapP(x)
+  }
+
+  /*
+  406. 根据身高重建队列
+假设有打乱顺序的一群人站成一个队列。 每个人由一个整数对(h, k)表示，其中h是这个人的身高，k是排在这个人前面且身高大于或等于h的人数。 编写一个算法来重建这个队列。
+
+注意：
+总人数少于1100人。
+
+示例
+
+输入:
+[[7,0], [4,4], [7,1], [5,0], [6,1], [5,2]]
+
+输出:
+[[5,0], [7,0], [5,2], [6,1], [4,4], [7,1]]
+   */
+  def reconstructQueue(people: Array[Array[Int]]): Array[Array[Int]] = {
+    val newP = people.sortWith((A, B) => {
+      if (A(0) == B(0)) B(1) - A(1) > 0 else A(0) - B(0) > 0
+    })
+    val retArr = new ListBuffer[Array[Int]]
+
+    for (p <- newP) {
+      retArr.insert(p(1), p)
+    }
+    retArr.toArray
   }
 }
