@@ -196,7 +196,10 @@ object Solutions {
     //    topKFrequent(Array(4, 1, -1, 2, -1, 2, 3), 2).foreach(println)
     //    println(decodeString("3[z]2[2[y]pq4[2[jk]e1[f]]]ef"))
     //    calcEquation(List(List("a", "b"), List("b", "c")), Array(2.0, 3.0), List(List("a", "c"), List("b", "a"), List("a", "e"), List("a", "a"))).foreach(println)
-    reconstructQueue(Array(Array(7, 0), Array(4, 4), Array(7, 1), Array(5, 0), Array(6, 1), Array(5, 2)))
+    //    reconstructQueue(Array(Array(7, 0), Array(4, 4), Array(7, 1), Array(5, 0), Array(6, 1), Array(5, 2)))
+    //    println(canPartition(Array(1, 2, 3, 4)))
+    //    pathSum(new TreeNode(1), 1)
+    println(findAnagrams("baa", "aa"))
   }
 
   /*
@@ -4080,5 +4083,172 @@ equations[i][0], equations[i][1], queries[i][0], queries[i][1] 由小写英文�
       retArr.insert(p(1), p)
     }
     retArr.toArray
+  }
+
+  /*
+  416. 分割等和子集
+给定一个只包含正整数的非空数组。是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
+
+注意:
+
+每个数组中的元素不会超过 100
+数组的大小不会超过 200
+示例 1:
+
+输入: [1, 5, 11, 5]
+
+输出: true
+
+解释: 数组可以分割成 [1, 5, 5] 和 [11].
+
+
+示例 2:
+
+输入: [1, 2, 3, 5]
+
+输出: false
+
+解释: 数组不能分割成两个元素和相等的子集.
+   */
+  def canPartition(nums: Array[Int]): Boolean = {
+    val len = nums.length
+    if (len < 2)
+      return false
+    val maxNum = nums.max
+    val sumNum = nums.sum
+    val target = sumNum / 2
+    if (sumNum % 2 == 1 || maxNum > target)
+      return false
+
+    val dp: Array[Boolean] = new Array[Boolean](target + 1)
+    dp(0) = true
+
+    for (i <- 0 until len) {
+      val num = nums(i)
+      for (j <- Range(target, num - 1, -1)) {
+        dp(j) |= dp(j - num)
+      }
+    }
+    dp(target)
+  }
+
+  /*
+  437. 路径总和 III
+给定一个二叉树，它的每个结点都存放着一个整数值。
+
+找出路径和等于给定数值的路径总数。
+
+路径不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。
+
+二叉树不超过1000个节点，且节点数值范围是 [-1000000,1000000] 的整数。
+
+示例：
+
+root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
+
+      10
+     /  \
+    5   -3
+   / \    \
+  3   2   11
+ / \   \
+3  -2   1
+
+返回 3。和等于 8 的路径有:
+
+1.  5 -> 3
+2.  5 -> 2 -> 1
+3.  -3 -> 11
+   */
+  def pathSum(root: TreeNode, sum: Int): Int = {
+    val map: mutable.Map[Int, Int] = mutable.Map[Int, Int]()
+    map(0) = 1
+    helper(root, map, sum, 0)
+  }
+
+  def helper(root: TreeNode, map: mutable.Map[Int, Int], sum: Int, _pathSum: Int): Int = {
+    var pathSum = _pathSum
+    var res = 0
+    if (root == null)
+      return 0
+
+    pathSum += root.value
+
+    res = map.getOrElse(pathSum - sum, 0) + res
+    map(pathSum) = map.getOrElse(pathSum, 0) + 1
+    res = helper(root.left, map, sum, pathSum) + helper(root.right, map, sum, pathSum) + res
+    map(pathSum) = map(pathSum) - 1
+    res
+  }
+
+  /*
+  438. 找到字符串中所有字母异位词
+给定一个字符串 s 和一个非空字符串 p，找到 s 中所有是 p 的字母异位词的子串，返回这些子串的起始索引。
+
+字符串只包含小写英文字母，并且字符串 s 和 p 的长度都不超过 20100。
+
+说明：
+
+字母异位词指字母相同，但排列不同的字符串。
+不考虑答案输出的顺序。
+示例 1:
+
+输入:
+s: "cbaebabacd" p: "abc"
+
+输出:
+[0, 6]
+
+解释:
+起始索引等于 0 的子串是 "cba", 它是 "abc" 的字母异位词。
+起始索引等于 6 的子串是 "bac", 它是 "abc" 的字母异位词。
+ 示例 2:
+
+输入:
+s: "abab" p: "ab"
+
+输出:
+[0, 1, 2]
+
+解释:
+起始索引等于 0 的子串是 "ab", 它是 "ab" 的字母异位词。
+起始索引等于 1 的子串是 "ba", 它是 "ab" 的字母异位词。
+起始索引等于 2 的子串是 "ab", 它是 "ab" 的字母异位词。
+
+   */
+  def findAnagrams(s: String, p: String): List[Int] = {
+    val needMap: mutable.Map[Char, Int] = mutable.Map[Char, Int]()
+    val windowMap: mutable.Map[Char, Int] = mutable.Map[Char, Int]()
+    for (c <- p) {
+      needMap(c) = needMap.getOrElse(c, 0) + 1
+    }
+
+    var left, right = 0
+    var valid = 0
+    val list: ListBuffer[Int] = new ListBuffer[Int]()
+    while (right < s.length) {
+      val c = s(right)
+      right += 1
+      if (needMap.contains(c)) {
+        windowMap(c) = windowMap.getOrElse(c, 0) + 1
+        if (windowMap(c) == needMap(c))
+          valid += 1
+      }
+
+      while (right - left >= p.size) {
+        if (valid == needMap.size) {
+          list.append(left)
+        }
+        val d = s(left)
+        left += 1
+
+        if (needMap.contains(d)) {
+          if (windowMap(d) == needMap(d))
+            valid -= 1
+          windowMap(d) -= 1
+        }
+      }
+    }
+    list.toList
   }
 }
