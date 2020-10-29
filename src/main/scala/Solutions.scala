@@ -197,10 +197,32 @@ object Solutions {
     //    println(decodeString("3[z]2[2[y]pq4[2[jk]e1[f]]]ef"))
     //    calcEquation(List(List("a", "b"), List("b", "c")), Array(2.0, 3.0), List(List("a", "c"), List("b", "a"), List("a", "e"), List("a", "a"))).foreach(println)
     //    reconstructQueue(Array(Array(7, 0), Array(4, 4), Array(7, 1), Array(5, 0), Array(6, 1), Array(5, 2)))
-    //    println(canPartition(Array(1, 2, 3, 4)))
+    println(canPartition(Array(1, 2, 3, 4)))
     //    pathSum(new TreeNode(1), 1)
     //    println(findAnagrams("baa", "aa"))
-    println(findDisappearedNumbers(Array(4, 3, 2, 7, 8, 2, 3, 1)))
+    //    println(findDisappearedNumbers(Array(4, 3, 2, 7, 8, 2, 3, 1)))
+    //    [5,4,8,11,null,13,4,7,2,null,null,5,1]
+    //    val a = new TreeNode(5)
+    //    val b = new TreeNode(4)
+    //    val c = new TreeNode(8)
+    //    val d = new TreeNode(11)
+    //    val e = new TreeNode(13)
+    //    val f = new TreeNode(4)
+    //    val g = new TreeNode(7)
+    //    val h = new TreeNode(2)
+    //    val i = new TreeNode(5)
+    //    val j = new TreeNode(1)
+    //    a.left = b
+    //    a.right= c
+    //    b.left = d
+    //    c.left = e
+    //    c.right = f
+    //    d.left = g
+    //    d.right = h
+    //    f.left = i
+    //    f.right = j
+    //    println(pathSum(a, 22))
+
   }
 
   /*
@@ -4121,16 +4143,20 @@ equations[i][0], equations[i][1], queries[i][0], queries[i][1] 由小写英文�
     if (sumNum % 2 == 1 || maxNum > target)
       return false
 
-    val dp: Array[Boolean] = new Array[Boolean](target + 1)
-    dp(0) = true
+    val dp: Array[Array[Boolean]] = Array.ofDim[Boolean](len, target + 1)
+    dp(0)(nums(0)) = true
 
-    for (i <- 0 until len) {
+    for (i <- 1 until len) {
       val num = nums(i)
-      for (j <- Range(target, num - 1, -1)) {
-        dp(j) |= dp(j - num)
+      for (j <- 1 to target) {
+        if (num == j) {
+          dp(i)(j) = true
+        } else if (j > num) {
+          dp(i)(j) = dp(i - 1)(j) | dp(i - 1)(j - num)
+        }
       }
     }
-    dp(target)
+    dp(len - 1)(target)
   }
 
   /*
