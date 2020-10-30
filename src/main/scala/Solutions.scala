@@ -204,25 +204,25 @@ object Solutions {
     //    println(hammingDistance(1, 4))
     //    println(findTargetSumWays(Array(1, 1, 1, 1, 1), 3))
     //    [4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]
-    val a4 = new TreeNode(4)
-    val b1 = new TreeNode(1)
-    val c6 = new TreeNode(6)
-    val d0 = new TreeNode(0)
-    val e2 = new TreeNode(2)
-    val f5 = new TreeNode(5)
-    val g7 = new TreeNode(7)
-    val h3 = new TreeNode(3)
-    val i8 = new TreeNode(8)
-    a4.left = b1
-    a4.right = c6
-    b1.left = d0
-    b1.right = e2
-    c6.left = f5
-    c6.right = g7
-    e2.right = h3
-    g7.right = i8
-    convertBST(a4)
-//    convertBST2(a4)
+    //    val a4 = new TreeNode(4)
+    //    val b1 = new TreeNode(1)
+    //    val c6 = new TreeNode(6)
+    //    val d0 = new TreeNode(0)
+    //    val e2 = new TreeNode(2)
+    //    val f5 = new TreeNode(5)
+    //    val g7 = new TreeNode(7)
+    //    val h3 = new TreeNode(3)
+    //    val i8 = new TreeNode(8)
+    //    a4.left = b1
+    //    a4.right = c6
+    //    b1.left = d0
+    //    b1.right = e2
+    //    c6.left = f5
+    //    c6.right = g7
+    //    e2.right = h3
+    //    g7.right = i8
+    //    convertBST(a4)
+    //    convertBST2(a4)
     //    [5,4,8,11,null,13,4,7,2,null,null,5,1]
     //    val a = new TreeNode(5)
     //    val b = new TreeNode(4)
@@ -244,6 +244,7 @@ object Solutions {
     //    f.left = i
     //    f.right = j
     //    println(pathSum(a, 22))
+    println(subarraySum(Array(1, 1, 1), 2))
 
   }
 
@@ -4459,6 +4460,7 @@ s: "abab" p: "ab"
    */
   def convertBST(root: TreeNode): TreeNode = {
     var sum = 0
+
     def dfs(root: TreeNode = root): TreeNode = {
       if (root != null) {
         dfs(root.right)
@@ -4468,6 +4470,7 @@ s: "abab" p: "ab"
       }
       root
     }
+
     dfs()
   }
 
@@ -4502,7 +4505,36 @@ s: "abab" p: "ab"
       ans = Math.max(ans, L + R + 1)
       Math.max(L, R) + 1
     }
+
     depth(root)
     ans - 1
+  }
+
+  /*
+  560. 和为K的子数组
+给定一个整数数组和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数。
+
+示例 1 :
+
+输入:nums = [1,1,1], k = 2
+输出: 2 , [1,1] 与 [1,1] 为两种不同的情况。
+说明 :
+
+数组的长度为 [1, 20,000]。
+数组中元素的范围是 [-1000, 1000] ，且整数 k 的范围是 [-1e7, 1e7]。
+   */
+  def subarraySum(nums: Array[Int], k: Int): Int = {
+    var count, pre = 0
+    val map: mutable.Map[Int, Int] = mutable.Map[Int, Int]()
+    map(0) = 1
+
+    for (num <- nums) {
+      pre += num
+      if (map.contains(pre - k)) {
+        count += map(pre - k)
+      }
+      map(pre) = map.getOrElse(pre, 0) + 1
+    }
+    count
   }
 }
