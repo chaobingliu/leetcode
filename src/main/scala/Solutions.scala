@@ -4471,17 +4471,38 @@ s: "abab" p: "ab"
     dfs()
   }
 
+  /*
+543. 二叉树的直径
+给定一棵二叉树，你需要计算它的直径长度。一棵二叉树的直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过也可能不穿过根结点。
 
 
-  def dfs(root: TreeNode, _sum: Int): TreeNode = {
-    var sum = _sum
-    if (root != null) {
-      dfs(root.right, sum)
-      sum += root.value
-      root.value = sum
-      dfs(root.left, sum)
+
+示例 :
+给定二叉树
+
+        1
+       / \
+      2   3
+     / \
+    4   5
+返回 3, 它的长度是路径 [4,2,1,3] 或者 [5,2,1,3]。
+
+
+
+注意：两结点之间的路径长度是以它们之间边的数目表示。
+ */
+  def diameterOfBinaryTree(root: TreeNode): Int = {
+    var ans = 1
+
+    def depth(root: TreeNode): Int = {
+      if (root == null)
+        return 0
+      val L = depth(root.left)
+      val R = depth(root.right)
+      ans = Math.max(ans, L + R + 1)
+      Math.max(L, R) + 1
     }
-    root
+    depth(root)
+    ans - 1
   }
-
 }
