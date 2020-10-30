@@ -200,7 +200,29 @@ object Solutions {
     //    println(canPartition(Array(1, 2, 3, 4)))
     //    pathSum(new TreeNode(1), 1)
     //    println(findAnagrams("baa", "aa"))
-    println(findDisappearedNumbers(Array(4, 3, 2, 7, 8, 2, 3, 1)))
+    //    println(findDisappearedNumbers(Array(4, 3, 2, 7, 8, 2, 3, 1)))
+    //    println(hammingDistance(1, 4))
+    //    println(findTargetSumWays(Array(1, 1, 1, 1, 1), 3))
+    //    [4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]
+    val a4 = new TreeNode(4)
+    val b1 = new TreeNode(1)
+    val c6 = new TreeNode(6)
+    val d0 = new TreeNode(0)
+    val e2 = new TreeNode(2)
+    val f5 = new TreeNode(5)
+    val g7 = new TreeNode(7)
+    val h3 = new TreeNode(3)
+    val i8 = new TreeNode(8)
+    a4.left = b1
+    a4.right = c6
+    b1.left = d0
+    b1.right = e2
+    c6.left = f5
+    c6.right = g7
+    e2.right = h3
+    g7.right = i8
+    convertBST(a4)
+//    convertBST2(a4)
   }
 
   /*
@@ -4285,4 +4307,155 @@ s: "abab" p: "ab"
     }
     buffer.toList
   }
+
+  /*
+  461. 汉明距离
+两个整数之间的汉明距离指的是这两个数字对应二进制位不同的位置的数目。
+
+给出两个整数 x 和 y，计算它们之间的汉明距离。
+
+注意：
+0 ≤ x, y < 231.
+
+示例:
+
+输入: x = 1, y = 4
+
+输出: 2
+
+解释:
+1   (0 0 0 1)
+4   (0 1 0 0)
+       ↑   ↑
+
+上面的箭头指出了对应二进制位不同的位置。
+   */
+  def hammingDistance(x: Int, y: Int): Int = {
+    Integer.bitCount(x ^ y)
+  }
+
+  /*
+  494. 目标和
+给定一个非负整数数组，a1, a2, ..., an, 和一个目标数，S。现在你有两个符号 + 和 -。对于数组中的任意一个整数，你都可以从 + 或 -中选择一个符号添加在前面。
+
+返回可以使最终数组和为目标数 S 的所有添加符号的方法数。
+
+
+
+示例：
+
+输入：nums: [1, 1, 1, 1, 1], S: 3
+输出：5
+解释：
+
+-1+1+1+1+1 = 3
++1-1+1+1+1 = 3
++1+1-1+1+1 = 3
++1+1+1-1+1 = 3
++1+1+1+1-1 = 3
+
+一共有5种方法让最终目标和为3。
+
+
+提示：
+
+数组非空，且长度不会超过 20 。
+初始的数组的和不会超过 1000 。
+保证返回的最终结果能被 32 位整数存下。
+   */
+  def findTargetSumWays(nums: Array[Int], S: Int): Int = {
+    val sum = nums.sum
+    if (Math.abs(S) > Math.abs(sum))
+      return 0
+
+    val len = nums.length
+    val dpLen = sum * 2 + 1
+    val dp: Array[Array[Int]] = Array.ofDim[Int](len, dpLen)
+
+    if (nums(0) == 0) {
+      dp(0)(sum) = 2
+    } else {
+      dp(0)(sum + nums(0)) = 1
+      dp(0)(sum - nums(0)) = 1
+    }
+
+    for (i <- 1 until len) {
+      val num = nums(i)
+      for (j <- 0 until dpLen) {
+        val l = if (j - num > 0) j - num else 0
+        val r = if (j + num < dpLen) j + num else 0
+        dp(i)(j) = dp(i - 1)(l) + dp(i - 1)(r)
+      }
+    }
+    dp(len - 1)(sum + S)
+  }
+
+  /*
+  538. 把二叉搜索树转换为累加树
+给出二叉 搜索 树的根节点，该树的节点值各不相同，请你将其转换为累加树（Greater Sum Tree），使每个节点 node 的新值等于原树中大于或等于 node.val 的值之和。
+
+提醒一下，二叉搜索树满足下列约束条件：
+
+节点的左子树仅包含键 小于 节点键的节点。
+节点的右子树仅包含键 大于 节点键的节点。
+左右子树也必须是二叉搜索树。
+注意：本题和 1038: https://leetcode-cn.com/problems/binary-search-tree-to-greater-sum-tree/ 相同
+
+
+
+示例 1：
+
+
+
+输入：[4,1,6,0,2,5,7,null,null,null,3,null,null,null,8]
+输出：[30,36,21,36,35,26,15,null,null,null,33,null,null,null,8]
+示例 2：
+
+输入：root = [0,null,1]
+输出：[1,null,1]
+示例 3：
+
+输入：root = [1,0,2]
+输出：[3,3,2]
+示例 4：
+
+输入：root = [3,2,4,1]
+输出：[7,9,4,10]
+
+
+提示：
+
+树中的节点数介于 0 和 104 之间。
+每个节点的值介于 -104 和 104 之间。
+树中的所有值 互不相同 。
+给定的树为二叉搜索树。
+
+   */
+  def convertBST(root: TreeNode): TreeNode = {
+    var sum = 0
+    def dfs(root: TreeNode = root): TreeNode = {
+      if (root != null) {
+        dfs(root.right)
+        sum += root.value
+        root.value = sum
+        dfs(root.left)
+      }
+      root
+    }
+    dfs()
+  }
+
+
+
+  def dfs(root: TreeNode, _sum: Int): TreeNode = {
+    var sum = _sum
+    if (root != null) {
+      dfs(root.right, sum)
+      sum += root.value
+      root.value = sum
+      dfs(root.left, sum)
+    }
+    root
+  }
+
 }
