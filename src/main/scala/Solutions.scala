@@ -197,7 +197,7 @@ object Solutions {
     //    println(decodeString("3[z]2[2[y]pq4[2[jk]e1[f]]]ef"))
     //    calcEquation(List(List("a", "b"), List("b", "c")), Array(2.0, 3.0), List(List("a", "c"), List("b", "a"), List("a", "e"), List("a", "a"))).foreach(println)
     //    reconstructQueue(Array(Array(7, 0), Array(4, 4), Array(7, 1), Array(5, 0), Array(6, 1), Array(5, 2)))
-    println(canPartition(Array(1, 2, 3, 4)))
+    //    println(canPartition(Array(1, 2, 3, 4)))
     //    pathSum(new TreeNode(1), 1)
     //    println(findAnagrams("baa", "aa"))
     //    println(findDisappearedNumbers(Array(4, 3, 2, 7, 8, 2, 3, 1)))
@@ -244,7 +244,8 @@ object Solutions {
     //    f.left = i
     //    f.right = j
     //    println(pathSum(a, 22))
-    println(subarraySum(Array(1, 1, 1), 2))
+    //    println(subarraySum(Array(1, 1, 1), 2))
+    println(countSubstrings("abc"))
 
   }
 
@@ -4566,5 +4567,123 @@ s: "abab" p: "ab"
       }
     }
     if (end - start >= 0) end - start + 1 else 0
+  }
+
+  /*
+  621. 任务调度器
+给定一个用字符数组表示的 CPU 需要执行的任务列表。其中包含使用大写的 A - Z 字母表示的26 种不同种类的任务。任务可以以任意顺序执行，并且每个任务都可以在 1 个单位时间内执行完。CPU 在任何一个单位时间内都可以执行一个任务，或者在待命状态。
+
+然而，两个相同种类的任务之间必须有长度为 n 的冷却时间，因此至少有连续 n 个单位时间内 CPU 在执行不同的任务，或者在待命状态。
+
+你需要计算完成所有任务所需要的最短时间。
+
+
+
+示例 ：
+
+输入：tasks = ["A","A","A","B","B","B"], n = 2
+输出：8
+解释：A -> B -> (待命) -> A -> B -> (待命) -> A -> B.
+     在本示例中，两个相同类型任务之间必须间隔长度为 n = 2 的冷却时间，而执行一个任务只需要一个单位时间，所以中间出现了（待命）状态。
+
+
+提示：
+
+任务的总个数为 [1, 10000]。
+n 的取值范围为 [0, 100]。
+   */
+  def leastInterval(tasks: Array[Char], n: Int): Int = {
+    var arr: Array[Int] = new Array[Int](26)
+    for (c <- tasks) {
+      arr(c - 'A') += 1
+    }
+    arr = arr.sorted
+    val maxVal = arr(25) - 1
+    var idleSlots = maxVal * n
+    for (i <- Range(24, -1, -1); if arr(i) > 0) {
+      idleSlots -= Math.min(arr(i), maxVal)
+    }
+    if (idleSlots > 0) idleSlots + tasks.length else tasks.length
+  }
+
+  /*
+  647. 回文子串
+给定一个字符串，你的任务是计算这个字符串中有多少个回文子串。
+
+具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串。
+
+
+
+示例 1：
+
+输入："abc"
+输出：3
+解释：三个回文子串: "a", "b", "c"
+示例 2：
+
+输入："aaa"
+输出：6
+解释：6个回文子串: "a", "a", "a", "aa", "aa", "aaa"
+
+
+提示：
+
+输入的字符串长度不会超过 1000 。
+   */
+  def countSubstrings(s: String): Int = {
+    val t: StringBuilder = new StringBuilder("$#");
+    for (c <- s) {
+      t.append(c)
+      t.append('#')
+    }
+    val n = t.length();
+    t.append('!');
+
+    val f: Array[Int] = new Array[Int](n)
+    var iMax, rMax, ans = 0;
+    for (i <- 1 until n) {
+      // 初始化 f[i]
+      f(i) = if (i <= rMax) Math.min(rMax - i + 1, f(2 * iMax - i)) else 1
+      // 中心拓展
+      while (t.charAt(i + f(i)) == t.charAt(i - f(i))) {
+        f(i) += 1
+      }
+      // 动态维护 iMax 和 rMax
+      if (i + f(i) - 1 > rMax) {
+        iMax = i
+        rMax = i + f(i) - 1
+      }
+      // 统计答案, 当前贡献为 (f[i] - 1) / 2 上取整
+      ans += f(i) / 2
+    }
+    ans
+  }
+
+  /*
+  739. 每日温度
+请根据每日 气温 列表，重新生成一个列表。对应位置的输出为：要想观测到更高的气温，至少需要等待的天数。如果气温在这之后都不会升高，请在该位置用 0 来代替。
+
+例如，给定一个列表 temperatures = [73, 74, 75, 71, 69, 72, 76, 73]，你的输出应该是 [1, 1, 4, 2, 1, 1, 0, 0]。
+
+提示：气温 列表长度的范围是 [1, 30000]。每个气温的值的均为华氏度，都是在 [30, 100] 范围内的整数。
+   */
+  def dailyTemperatures(T: Array[Int]): Array[Int] = {
+    val len = T.length
+    val result: Array[Int] = new Array[Int](len)
+    val loop = new Breaks
+    for (i <- 0 until len) {
+      val current = T(i)
+      if (current < 100) {
+        loop.breakable {
+          for (j <- i + 1 until len) {
+            if (T(j) > current) {
+              result(i) = j - i
+              loop.break()
+            }
+          }
+        }
+      }
+    }
+    result
   }
 }
