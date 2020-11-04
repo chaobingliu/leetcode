@@ -379,6 +379,8 @@ n 皇后问题研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并
   }
 
   def openLock2(deadends: Array[String], target: String): Int = {
+    if (deadends.contains("0000"))
+      return -1
     val visited: mutable.HashSet[String] = mutable.HashSet[String]()
     for (str <- deadends) {
       visited.add(str)
