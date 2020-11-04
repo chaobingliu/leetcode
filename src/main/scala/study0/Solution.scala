@@ -6,7 +6,9 @@ object Solution {
   def main(args: Array[String]): Unit = {
     //    println(fib(20))
     //    println(coinChange(Array(2), 3))
-    println(permute(Array(1, 2, 3)))
+    //    println(permute(Array(1, 2, 3)))
+    println(solveNQueens(4))
+
   }
 
   /*
@@ -128,6 +130,7 @@ F(N) = F(N - 1) + F(N - 2), 其中 N > 1.
     def backtrack(list: ListBuffer[Int]) {
       if (list.length == nums.length) {
         buffer.append(list.toList)
+        return
       }
 
       for (i <- 0 until nums.length) {
@@ -142,6 +145,96 @@ F(N) = F(N - 1) + F(N - 2), 其中 N > 1.
     }
 
     backtrack(new ListBuffer[Int]())
+    buffer.toList
+  }
+
+  /*
+  51. N 皇后
+n 皇后问题研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+
+
+上图为 8 皇后问题的一种解法。
+
+给定一个整数 n，返回所有不同的 n 皇后问题的解决方案。
+
+每一种解法包含一个明确的 n 皇后问题的棋子放置方案，该方案中 'Q' 和 '.' 分别代表了皇后和空位。
+
+
+
+示例：
+
+输入：4
+输出：[
+ [".Q..",  // 解法 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // 解法 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+解释: 4 皇后问题存在两个不同的解法。
+
+
+提示：
+
+皇后彼此不能相互攻击，也就是说：任何两个皇后都不能处于同一条横行、纵行或斜线上。
+   */
+  def solveNQueens(n: Int): List[List[String]] = {
+    val buffer: ListBuffer[List[String]] = new ListBuffer[List[String]]()
+    val board: Array[Array[String]] = Array.fill[String](n, n)(".")
+
+    def backtrack(strBuffer: ListBuffer[String], row: Int): Unit = {
+      if (row == n) {
+        buffer.append(strBuffer.toList)
+        return
+      }
+      for (col <- 0 until n) {
+        if (isValid(row, col)) {
+          board(row)(col) = "Q"
+          strBuffer.append(board(row).mkString(""))
+          backtrack(strBuffer, row + 1)
+          strBuffer.remove(strBuffer.length - 1)
+          board(row)(col) = "."
+        }
+      }
+    }
+
+    def isValid(row: Int, col: Int): Boolean = {
+      // 检查列是否有Q
+      for (i <- 0 until n) {
+        if (board(i)(col) == "Q") {
+          return false
+        }
+      }
+      // 检查左上方是否有Q
+      var r = row - 1
+      var c = col - 1
+      while (r >= 0 && c >= 0) {
+        if (board(r)(c) == "Q") {
+          return false
+        }
+        r -= 1
+        c -= 1
+      }
+
+      // 检查右上方是否有Q
+      r = row - 1
+      c = col + 1
+      while (r >= 0 && c < n) {
+        if (board(r)(c) == "Q") {
+          return false
+        }
+        r -= 1
+        c += 1
+      }
+      true
+    }
+
+    backtrack(new ListBuffer[String](), 0)
     buffer.toList
   }
 }
