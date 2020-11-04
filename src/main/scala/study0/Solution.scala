@@ -372,8 +372,13 @@ n 皇后问题研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并
         }
       }
       step += 1
-      q1 = q2
-      q2 = temp
+      // 选择少的集合优先扩散
+      if (temp.size > q2.size) {
+        q1 = q2
+        q2 = temp
+      } else {
+        q1 = temp
+      }
     }
     -1
   }
