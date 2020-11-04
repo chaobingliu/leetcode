@@ -1,9 +1,12 @@
 package study0
 
+import scala.collection.mutable.ListBuffer
+
 object Solution {
   def main(args: Array[String]): Unit = {
     //    println(fib(20))
-    println(coinChange(Array(2), 3))
+    //    println(coinChange(Array(2), 3))
+    println(permute(Array(1, 2, 3)))
   }
 
   /*
@@ -99,5 +102,46 @@ F(N) = F(N - 1) + F(N - 2), 其中 N > 1.
       }
     }
     if (dp(amount) == amount + 1) -1 else dp(amount)
+  }
+
+  /*
+  46. 全排列
+给定一个 没有重复 数字的序列，返回其所有可能的全排列。
+
+示例:
+
+输入: [1,2,3]
+输出:
+[
+  [1,2,3],
+  [1,3,2],
+  [2,1,3],
+  [2,3,1],
+  [3,1,2],
+  [3,2,1]
+]
+   */
+  def permute(nums: Array[Int]): List[List[Int]] = {
+    val buffer: ListBuffer[List[Int]] = new ListBuffer[List[Int]]()
+    val used: Array[Boolean] = new Array[Boolean](nums.length)
+
+    def backtrack(list: ListBuffer[Int]) {
+      if (list.length == nums.length) {
+        buffer.append(list.toList)
+      }
+
+      for (i <- 0 until nums.length) {
+        if (!used(i)) {
+          used(i) = true
+          list.append(nums(i))
+          backtrack(list)
+          list.remove(list.length - 1)
+          used(i) = false
+        }
+      }
+    }
+
+    backtrack(new ListBuffer[Int]())
+    buffer.toList
   }
 }
