@@ -16,8 +16,9 @@ object Solution {
     //    println(permute(Array(1, 2, 3)))
     //    println(solveNQueens(4))
     //    println(openLock(Array("0000"), "8888"))
-    searchRange(Array(2, 2), 6).foreach(println)
-
+    //    searchRange(Array(2, 2), 6).foreach(println)
+    //    println(minWindow("ADOBECODEBANC", "ABC"))
+    println(checkInclusion("ab", "eidboaoo"))
   }
 
   /*
@@ -523,5 +524,125 @@ nums 的每个元素都将在 [-9999, 9999]之间。
       }
     }
     return Array(-1, -1)
+  }
+
+  /*
+  76. 最小覆盖子串
+给你一个字符串 s 、一个字符串 t 。返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串 "" 。
+
+注意：如果 s 中存在这样的子串，我们保证它是唯一的答案。
+
+
+
+示例 1：
+
+输入：s = "ADOBECODEBANC", t = "ABC"
+输出："BANC"
+示例 2：
+
+输入：s = "a", t = "a"
+输出："a"
+
+
+提示：
+
+1 <= s.length, t.length <= 105
+s 和 t 由英文字母组成
+
+
+进阶：你能设计一个在 o(n) 时间内解决此问题的算法吗？
+   */
+  def minWindow(s: String, t: String): String = {
+    val need, window: mutable.Map[Char, Int] = mutable.Map[Char, Int]()
+    for (c <- t) {
+      need(c) = need.getOrElse(c, 0) + 1
+    }
+    var left, right = 0
+    var valid = 0
+    var start = 0
+    var maxLen = Int.MaxValue
+    while (right < s.length) {
+      val ch = s.charAt(right)
+      right += 1
+      if (need.contains(ch)) {
+        window(ch) = window.getOrElse(ch, 0) + 1
+        if (window(ch) == need(ch)) {
+          valid += 1
+        }
+      }
+      while (valid == need.size) {
+        if (right - left < maxLen) {
+          maxLen = right - left
+          start = left
+        }
+        val leftCh = s.charAt(left)
+        left += 1
+        if (need.contains(leftCh)) {
+          if (need(leftCh) == window(leftCh)) {
+            valid -= 1
+          }
+          window(leftCh) -= 1
+        }
+      }
+    }
+    if (maxLen == Int.MaxValue) "" else s.substring(start, start + maxLen)
+  }
+
+  /*
+  567. 字符串的排列
+给定两个字符串 s1 和 s2，写一个函数来判断 s2 是否包含 s1 的排列。
+
+换句话说，第一个字符串的排列之一是第二个字符串的子串。
+
+示例1:
+
+输入: s1 = "ab" s2 = "eidbaooo"
+输出: True
+解释: s2 包含 s1 的排列之一 ("ba").
+
+
+示例2:
+
+输入: s1= "ab" s2 = "eidboaoo"
+输出: False
+
+
+注意：
+
+输入的字符串只包含小写字母
+两个字符串的长度都在 [1, 10,000] 之间
+   */
+  def checkInclusion(s1: String, s2: String): Boolean = {
+    val need, window = mutable.Map[Char, Int]()
+    for (c <- s1) {
+      need(c) = need.getOrElse(c, 0) + 1
+    }
+
+    var left, right, valid = 0
+    while (right < s2.length) {
+      val ch = s2.charAt(right)
+      right += 1
+      if (need.contains(ch)) {
+        window(ch) = window.getOrElse(ch, 0) + 1
+        if (need(ch) == window(ch)) {
+          valid += 1
+        }
+      }
+
+      while (right - left == s1.length) {
+        if (valid == need.size) {
+          return true
+        }
+        val leftCh = s2.charAt(left)
+        left += 1
+        if (need.contains(leftCh)) {
+          if (need(leftCh) == window(leftCh)) {
+            valid -= 1
+          }
+          window(leftCh) -= 1
+        }
+      }
+    }
+    false
   }
 }
