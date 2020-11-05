@@ -15,7 +15,8 @@ object Solution {
     //    println(coinChange(Array(2), 3))
     //    println(permute(Array(1, 2, 3)))
     //    println(solveNQueens(4))
-    println(openLock(Array("0000"), "8888"))
+    //    println(openLock(Array("0000"), "8888"))
+    searchRange(Array(2, 2), 6).foreach(println)
 
   }
 
@@ -439,5 +440,88 @@ n 皇后问题研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并
     strArr.mkString("")
   }
 
+  /*
+704. 二分查找
+给定一个 n 个元素有序的（升序）整型数组 nums 和一个目标值 target  ，写一个函数搜索 nums 中的 target，如果目标值存在返回下标，否则返回 -1。
 
+
+示例 1:
+
+输入: nums = [-1,0,3,5,9,12], target = 9
+输出: 4
+解释: 9 出现在 nums 中并且下标为 4
+示例 2:
+
+输入: nums = [-1,0,3,5,9,12], target = 2
+输出: -1
+解释: 2 不存在 nums 中因此返回 -1
+
+
+提示：
+
+你可以假设 nums 中的所有元素是不重复的。
+n 将在 [1, 10000]之间。
+nums 的每个元素都将在 [-9999, 9999]之间。
+
+   */
+  def search(nums: Array[Int], target: Int): Int = {
+    if (nums == null)
+      return -1
+    var left = 0
+    var right = nums.length - 1
+    while (left <= right) {
+      val mid = left + (right - left) / 2
+      if (nums(mid) == target) {
+        return mid
+      } else if (nums(mid) < target) {
+        left = mid + 1
+      } else {
+        right = mid - 1
+      }
+    }
+    -1
+  }
+
+  /*
+  34. 在排序数组中查找元素的第一个和最后一个位置
+给定一个按照升序排列的整数数组 nums，和一个目标值 target。找出给定目标值在数组中的开始位置和结束位置。
+
+你的算法时间复杂度必须是 O(log n) 级别。
+
+如果数组中不存在目标值，返回 [-1, -1]。
+
+示例 1:
+
+输入: nums = [5,7,7,8,8,10], target = 8
+输出: [3,4]
+示例 2:
+
+输入: nums = [5,7,7,8,8,10], target = 6
+输出: [-1,-1]
+   */
+  def searchRange(nums: Array[Int], target: Int): Array[Int] = {
+    if (nums == null)
+      return Array(-1, -1)
+    var left = 0
+    var right = nums.length - 1
+    while (left <= right) {
+      val mid = left + (right - left) / 2
+      if (nums(mid) < target) {
+        left = mid + 1
+      } else if (nums(mid) > target) {
+        right = mid - 1
+      } else {
+        if (nums(left) < target) {
+          left += 1
+        }
+        if (nums(right) > target) {
+          right -= 1
+        }
+        if (nums(left) == target && nums(right) == target) {
+          return Array(left, right)
+        }
+      }
+    }
+    return Array(-1, -1)
+  }
 }
