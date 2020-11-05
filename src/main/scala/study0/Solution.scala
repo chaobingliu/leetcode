@@ -18,7 +18,9 @@ object Solution {
     //    println(openLock(Array("0000"), "8888"))
     //    searchRange(Array(2, 2), 6).foreach(println)
     //    println(minWindow("ADOBECODEBANC", "ABC"))
-    println(checkInclusion("ab", "eidboaoo"))
+    //    println(checkInclusion("ab", "eidboaoo"))
+    //    println(findAnagrams("abab", "ab"))
+    println(lengthOfLongestSubstring("pwwkew"))
   }
 
   /*
@@ -644,5 +646,111 @@ s 和 t 由英文字母组成
       }
     }
     false
+  }
+
+  /*
+  438. 找到字符串中所有字母异位词
+给定一个字符串 s 和一个非空字符串 p，找到 s 中所有是 p 的字母异位词的子串，返回这些子串的起始索引。
+
+字符串只包含小写英文字母，并且字符串 s 和 p 的长度都不超过 20100。
+
+说明：
+
+字母异位词指字母相同，但排列不同的字符串。
+不考虑答案输出的顺序。
+示例 1:
+
+输入:
+s: "cbaebabacd" p: "abc"
+
+输出:
+[0, 6]
+
+解释:
+起始索引等于 0 的子串是 "cba", 它是 "abc" 的字母异位词。
+起始索引等于 6 的子串是 "bac", 它是 "abc" 的字母异位词。
+ 示例 2:
+
+输入:
+s: "abab" p: "ab"
+
+输出:
+[0, 1, 2]
+
+解释:
+起始索引等于 0 的子串是 "ab", 它是 "ab" 的字母异位词。
+起始索引等于 1 的子串是 "ba", 它是 "ab" 的字母异位词。
+起始索引等于 2 的子串是 "ab", 它是 "ab" 的字母异位词。
+   */
+  def findAnagrams(s: String, p: String): List[Int] = {
+    val need, window = mutable.Map[Char, Int]()
+    for (c <- p) {
+      need(c) = need.getOrElse(c, 0) + 1
+    }
+    var left, right, valid = 0
+    val buffer: ListBuffer[Int] = new ListBuffer[Int]()
+    while (right < s.length) {
+      val ch = s.charAt(right)
+      right += 1
+      if (need.contains(ch)) {
+        window(ch) = window.getOrElse(ch, 0) + 1
+        if (need(ch) == window(ch)) {
+          valid += 1
+        }
+      }
+      while (right - left == p.length) {
+        if (valid == need.size) {
+          buffer.append(left)
+        }
+        val leftCh = s.charAt(left)
+        left += 1
+        if (need.contains(leftCh)) {
+          if (need(leftCh) == window(leftCh)) {
+            valid -= 1
+          }
+          window(leftCh) -= 1
+        }
+      }
+    }
+    buffer.toList
+  }
+
+  /*
+  3. 无重复字符的最长子串
+给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。
+
+示例 1:
+
+输入: "abcabcbb"
+输出: 3
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+示例 2:
+
+输入: "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+示例 3:
+
+输入: "pwwkew"
+输出: 3
+解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+     请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+   */
+  def lengthOfLongestSubstring(s: String): Int = {
+    val window = mutable.Map[Char, Int]()
+    var left, right = 0
+    var maxLen = 0
+    while (right < s.length) {
+      val ch = s.charAt(right)
+      right += 1
+      window(ch) = window.getOrElse(ch, 0) + 1
+      while (window(ch) > 1) {
+        val leftCh = s.charAt(left)
+        left += 1
+        window(leftCh) -= 1
+      }
+      maxLen = Math.max(maxLen, right - left)
+    }
+    maxLen
   }
 }
