@@ -22,7 +22,8 @@ object Solution {
     //    println(findAnagrams("abab", "ab"))
     //    println(lengthOfLongestSubstring("pwwkew"))
     //    println(maxProfit_with_cool(Array(1, 2, 3, 0, 2)))
-    println(maxProfit_k_any(1, Array(1, 2)))
+    //    println(maxProfit_k_any(1, Array(1, 2)))
+    println(rob_2(Array(1, 2, 3, 1)))
   }
 
   /*
@@ -1057,5 +1058,141 @@ dp[i][1][1] = max(dp[i-1][1][1], -prices[i])
       }
     }
     dp(n - 1)(k)(0)
+  }
+
+  /*
+  198. 打家劫舍
+你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+
+给定一个代表每个房屋存放金额的非负整数数组，计算你 不触动警报装置的情况下 ，一夜之内能够偷窃到的最高金额。
+
+
+
+示例 1：
+
+输入：[1,2,3,1]
+输出：4
+解释：偷窃 1 号房屋 (金额 = 1) ，然后偷窃 3 号房屋 (金额 = 3)。
+     偷窃到的最高金额 = 1 + 3 = 4 。
+示例 2：
+
+输入：[2,7,9,3,1]
+输出：12
+解释：偷窃 1 号房屋 (金额 = 2), 偷窃 3 号房屋 (金额 = 9)，接着偷窃 5 号房屋 (金额 = 1)。
+     偷窃到的最高金额 = 2 + 9 + 1 = 12 。
+
+
+提示：
+
+0 <= nums.length <= 100
+0 <= nums[i] <= 400
+   */
+  def rob_1(nums: Array[Int]): Int = {
+    var dp_i, dp_i_1, dp_i_2 = 0
+    for (n <- nums) {
+      dp_i = Math.max(dp_i_1, n + dp_i_2)
+      dp_i_2 = dp_i_1
+      dp_i_1 = dp_i
+    }
+    dp_i
+  }
+
+  /*
+  213. 打家劫舍 II
+你是一个专业的小偷，计划偷窃沿街的房屋，每间房内都藏有一定的现金。这个地方所有的房屋都 围成一圈 ，这意味着第一个房屋和最后一个房屋是紧挨着的。同时，相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警 。
+
+给定一个代表每个房屋存放金额的非负整数数组，计算你 在不触动警报装置的情况下 ，能够偷窃到的最高金额。
+
+
+
+示例 1：
+
+输入：nums = [2,3,2]
+输出：3
+解释：你不能先偷窃 1 号房屋（金额 = 2），然后偷窃 3 号房屋（金额 = 2）, 因为他们是相邻的。
+示例 2：
+
+输入：nums = [1,2,3,1]
+输出：4
+解释：你可以先偷窃 1 号房屋（金额 = 1），然后偷窃 3 号房屋（金额 = 3）。
+     偷窃到的最高金额 = 1 + 3 = 4 。
+示例 3：
+
+输入：nums = [0]
+输出：0
+
+
+提示：
+
+1 <= nums.length <= 100
+0 <= nums[i] <= 1000
+   */
+  def rob_2(nums: Array[Int]): Int = {
+    val n = nums.length
+    if (n == 1)
+      return nums(0)
+
+    def robRange(start: Int, end: Int): Int = {
+      var dp_i, dp_i_1, dp_i_2 = 0
+      for (i <- start to end) {
+        dp_i = Math.max(dp_i_1, dp_i_2 + nums(i))
+        dp_i_2 = dp_i_1
+        dp_i_1 = dp_i
+      }
+      dp_i
+    }
+
+    Math.max(robRange(0, n - 2), robRange(1, n - 1))
+  }
+
+  /*
+  337. 打家劫舍 III
+在上次打劫完一条街道之后和一圈房屋后，小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为“根”。 除了“根”之外，每栋房子有且只有一个“父“房子与之相连。一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。 如果两个直接相连的房子在同一天晚上被打劫，房屋将自动报警。
+
+计算在不触动警报的情况下，小偷一晚能够盗取的最高金额。
+
+示例 1:
+
+输入: [3,2,3,null,3,null,1]
+
+     3
+    / \
+   2   3
+    \   \
+     3   1
+
+输出: 7
+解释: 小偷一晚能够盗取的最高金额 = 3 + 3 + 1 = 7.
+示例 2:
+
+输入: [3,4,5,1,3,null,1]
+
+     3
+    / \
+   4   5
+  / \   \
+ 1   3   1
+
+输出: 9
+解释: 小偷一晚能够盗取的最高金额 = 4 + 5 = 9.
+   */
+  def rob(root: TreeNode): Int = {
+    // 返回值：第一位代表抢， 第二位代表不抢
+    def dp(root: TreeNode): (Int, Int) = {
+      if (root == null)
+        return (0, 0)
+
+      val (left_do, left_dont) = dp(root.left)
+      val (right_do, right_dont) = dp(root.right)
+
+      // 当前节点被抢时，子节点不能抢
+      val doRob = root.value + left_dont + right_dont
+      // 当前节点不抢时，子节点可抢，可不抢，取最大值
+      val notRob = Math.max(left_do, left_dont) + Math.max(right_do, right_dont)
+      (doRob, notRob)
+    }
+
+    val res = dp(root)
+    Math.max(res._1, res._2)
   }
 }
