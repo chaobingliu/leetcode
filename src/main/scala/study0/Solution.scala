@@ -23,7 +23,9 @@ object Solution {
     //    println(lengthOfLongestSubstring("pwwkew"))
     //    println(maxProfit_with_cool(Array(1, 2, 3, 0, 2)))
     //    println(maxProfit_k_any(1, Array(1, 2)))
-    println(rob_2(Array(1, 2, 3, 1)))
+    //    println(rob_2(Array(1, 2, 3, 1)))
+    //    println(removeCoveredIntervals(Array(Array(1, 2), Array(1, 3), Array(3, 2), Array(2, 4))))
+    println(merge(Array(Array())))
   }
 
   /*
@@ -1194,5 +1196,136 @@ dp[i][1][1] = max(dp[i-1][1][1], -prices[i])
 
     val res = dp(root)
     Math.max(res._1, res._2)
+  }
+
+  /*
+  1288. 删除被覆盖区间
+给你一个区间列表，请你删除列表中被其他区间所覆盖的区间。
+
+只有当 c <= a 且 b <= d 时，我们才认为区间 [a,b) 被区间 [c,d) 覆盖。
+
+在完成所有删除操作后，请你返回列表中剩余区间的数目。
+
+
+
+示例：
+
+输入：intervals = [[1,4],[3,6],[2,8]]
+输出：2
+解释：区间 [3,6] 被区间 [2,8] 覆盖，所以它被删除了。
+
+
+提示：​​​​​​
+
+1 <= intervals.length <= 1000
+0 <= intervals[i][0] < intervals[i][1] <= 10^5
+对于所有的 i != j：intervals[i] != intervals[j]
+   */
+  def removeCoveredIntervals(intervals: Array[Array[Int]]): Int = {
+    val sortedIntervals = intervals.sortBy(r => (r(0), r(1)))(Ordering.Tuple2(Ordering.Int, Ordering.Int.reverse))
+    var left = sortedIntervals(0)(0)
+    var right = sortedIntervals(0)(1)
+    var res = 0
+
+    for (i <- 1 until sortedIntervals.length) {
+      val n = sortedIntervals(i)
+      if (left <= n(0) && right >= n(1)) {
+        res += 1
+      } else if (right >= n(0) && right < n(1)) {
+        right = n(1)
+      } else if (n(0) > right) {
+        left = n(0)
+        right = n(1)
+      }
+    }
+    intervals.length - res
+  }
+
+  /*
+  56. 合并区间
+给出一个区间的集合，请合并所有重叠的区间。
+
+
+
+示例 1:
+
+输入: intervals = [[1,3],[2,6],[8,10],[15,18]]
+输出: [[1,6],[8,10],[15,18]]
+解释: 区间 [1,3] 和 [2,6] 重叠, 将它们合并为 [1,6].
+示例 2:
+
+输入: intervals = [[1,4],[4,5]]
+输出: [[1,5]]
+解释: 区间 [1,4] 和 [4,5] 可被视为重叠区间。
+注意：输入类型已于2019年4月15日更改。 请重置默认代码定义以获取新方法签名。
+
+
+
+提示：
+
+intervals[i][0] <= intervals[i][1]
+   */
+  def merge(intervals: Array[Array[Int]]): Array[Array[Int]] = {
+    if (intervals == null || intervals.isEmpty)
+      return Array()
+    val sortedIntervals = intervals.sortBy(r => (r(0), r(1)))(Ordering.Tuple2(Ordering.Int, Ordering.Int.reverse))
+
+    val buffer = new ListBuffer[Array[Int]]()
+    buffer.append(sortedIntervals(0))
+
+    for (i <- 1 until sortedIntervals.length) {
+      val last: Array[Int] = buffer.last
+      val n = sortedIntervals(i)
+      if (n(0) <= last(1)) {
+        last(1) = Math.max(last(1), n(1))
+      } else {
+        buffer.append(n)
+      }
+    }
+    buffer.toArray
+  }
+
+  /*
+  986. 区间列表的交集
+给定两个由一些 闭区间 组成的列表，每个区间列表都是成对不相交的，并且已经排序。
+
+返回这两个区间列表的交集。
+
+（形式上，闭区间 [a, b]（其中 a <= b）表示实数 x 的集合，而 a <= x <= b。两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3]。）
+
+
+
+示例：
+
+
+
+输入：A = [[0,2],[5,10],[13,23],[24,25]], B = [[1,5],[8,12],[15,24],[25,26]]
+输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]]
+
+
+提示：
+
+0 <= A.length < 1000
+0 <= B.length < 1000
+0 <= A[i].start, A[i].end, B[i].start, B[i].end < 10^9
+   */
+  def intervalIntersection(A: Array[Array[Int]], B: Array[Array[Int]]): Array[Array[Int]] = {
+    val sortedA = A.sortBy(r => (r(0), r(1)))(Ordering.Tuple2(Ordering.Int, Ordering.Int.reverse))
+    val sortedB = B.sortBy(r => (r(0), r(1)))(Ordering.Tuple2(Ordering.Int, Ordering.Int.reverse))
+    var i, j = 0
+    val buffer = new ListBuffer[Array[Int]]()
+    while (i < sortedA.length && j < sortedB.length) {
+      val a = sortedA(i)
+      val b = sortedB(j)
+      if (a(1) >= b(0) && b(1) >= a(0)) {
+        buffer.append(Array(Math.max(a(0), b(0)), Math.min(a(1), b(1))))
+      }
+      if (a(1) < b(1)) {
+        i += 1
+      } else {
+        j += 1
+      }
+    }
+    buffer.toArray
   }
 }
