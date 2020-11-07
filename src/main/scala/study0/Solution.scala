@@ -25,7 +25,9 @@ object Solution {
     //    println(maxProfit_k_any(1, Array(1, 2)))
     //    println(rob_2(Array(1, 2, 3, 1)))
     //    println(removeCoveredIntervals(Array(Array(1, 2), Array(1, 3), Array(3, 2), Array(2, 4))))
-    println(merge(Array(Array())))
+    //    println(merge(Array(Array())))
+    //    println(threeSum(Array(0, 0, 0)))
+    println(fourSum(Array(1, 0, -1, 0, -2, 2), 0))
   }
 
   /*
@@ -1327,5 +1329,90 @@ intervals[i][0] <= intervals[i][1]
       }
     }
     buffer.toArray
+  }
+
+  def nSum(nums: Array[Int], n: Int, start: Int, target: Int): ListBuffer[List[Int]] = {
+    val res = new ListBuffer[List[Int]]()
+    if (nums.length < n || n < 2)
+      return res
+    if (n == 2) {
+      var lo = start
+      var hi = nums.length - 1
+      while (lo < hi) {
+        val left = nums(lo)
+        val right = nums(hi)
+        val sum = left + right
+        if (sum < target) {
+          while (lo < hi && nums(lo) == left) lo += 1
+        } else if (sum > target) {
+          while (lo < hi && nums(hi) == right) hi -= 1
+        } else {
+          res.append(List(left, right))
+          while (lo < hi && nums(lo) == left) lo += 1
+          while (lo < hi && nums(hi) == right) hi -= 1
+        }
+      }
+    } else {
+      var i = start
+      while (i < nums.length) {
+        val buffer = nSum(nums, n - 1, i + 1, target - nums(i))
+        for (arr <- buffer) {
+          res.append(nums(i) +: arr)
+        }
+        while (i < nums.length - 1 && nums(i) == nums(i + 1)) i += 1
+        i += 1
+      }
+    }
+    res
+  }
+
+  /*
+  15. 三数之和
+给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有满足条件且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+
+
+示例：
+
+给定数组 nums = [-1, 0, 1, 2, -1, -4]，
+
+满足要求的三元组集合为：
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+   */
+  def threeSum(nums: Array[Int]): List[List[Int]] = {
+    if (nums == null || nums.isEmpty)
+      return List[List[Int]]()
+    nSum(nums.sorted, 3, 0, 0).toList
+  }
+
+  /*
+  18. 四数之和
+给定一个包含 n 个整数的数组 nums 和一个目标值 target，判断 nums 中是否存在四个元素 a，b，c 和 d ，使得 a + b + c + d 的值与 target 相等？找出所有满足条件且不重复的四元组。
+
+注意：
+
+答案中不可以包含重复的四元组。
+
+示例：
+
+给定数组 nums = [1, 0, -1, 0, -2, 2]，和 target = 0。
+
+满足要求的四元组集合为：
+[
+  [-1,  0, 0, 1],
+  [-2, -1, 1, 2],
+  [-2,  0, 0, 2]
+]
+   */
+  def fourSum(nums: Array[Int], target: Int): List[List[Int]] = {
+    if (nums == null || nums.isEmpty) {
+      return List[List[Int]]()
+    }
+    nSum(nums.sorted, 4, 0, target).toList
   }
 }
