@@ -37,7 +37,7 @@ object Solution {
     //    println(fourSum(Array(1, 0, -1, 0, -2, 2), 0))
     //    println(superEggDrop(4, 5000))
     //    println(constructMaximumBinaryTree(Array(3, 2, 1, 6, 0, 5)))
-    println(buildTree(Array(3, 9, 20, 15, 7), Array(9, 3, 15, 20, 7)))
+    println(buildTree_with_pre_in(Array(3, 9, 20, 15, 7), Array(9, 3, 15, 20, 7)))
   }
 
   /*
@@ -1710,7 +1710,7 @@ struct Node {
   9  20
     /  \
    */
-  def buildTree(preorder: Array[Int], inorder: Array[Int]): TreeNode = {
+  def buildTree_with_pre_in(preorder: Array[Int], inorder: Array[Int]): TreeNode = {
     val map = mutable.Map[Int, Int]()
     for (i <- 0 until inorder.length) {
       map(inorder(i)) = i
@@ -1721,7 +1721,7 @@ struct Node {
         return null
 
       val root = new TreeNode(preorder(preStart))
-      val rootIndex = map(preorder(preStart))
+      val rootIndex = map(root.value)
 
       val leftSize = rootIndex - inStart
       root.left = build(preStart + 1, preStart + leftSize, inStart, rootIndex - 1)
@@ -1731,5 +1731,46 @@ struct Node {
     }
 
     build(0, preorder.length - 1, 0, inorder.length - 1)
+  }
+
+  /*
+  106. 从中序与后序遍历序列构造二叉树
+根据一棵树的中序遍历与后序遍历构造二叉树。
+
+注意:
+你可以假设树中没有重复的元素。
+
+例如，给出
+
+中序遍历 inorder = [9,3,15,20,7]
+后序遍历 postorder = [9,15,7,20,3]
+返回如下的二叉树：
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+   */
+  def buildTree_with_post_in(inorder: Array[Int], postorder: Array[Int]): TreeNode = {
+    val map = mutable.Map[Int, Int]()
+    for (i <- 0 until inorder.length) {
+      map(inorder(i)) = i
+    }
+
+    def build(inStart: Int, inEnd: Int, postStart: Int, postEnd: Int): TreeNode = {
+      if (postStart > postEnd)
+        return null
+
+      val root = new TreeNode(postorder(postEnd))
+      val rootIndex = map(root.value)
+
+      val leftSize = rootIndex - inStart
+      root.left = build(inStart, rootIndex - 1, postStart, postStart + leftSize - 1)
+      root.right = build(rootIndex + 1, inEnd, postStart + leftSize, postEnd - 1)
+      root
+    }
+
+    build(0, inorder.length - 1, 0, postorder.length - 1)
   }
 }
