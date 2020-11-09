@@ -1773,4 +1773,51 @@ struct Node {
 
     build(0, inorder.length - 1, 0, postorder.length - 1)
   }
+
+  /*
+  652. 寻找重复的子树
+给定一棵二叉树，返回所有重复的子树。对于同一类的重复子树，你只需要返回其中任意一棵的根结点即可。
+
+两棵树重复是指它们具有相同的结构以及相同的结点值。
+
+示例 1：
+
+        1
+       / \
+      2   3
+     /   / \
+    4   2   4
+       /
+      4
+下面是两个重复的子树：
+
+      2
+     /
+    4
+和
+
+    4
+因此，你需要以列表的形式返回上述重复子树的根结点。
+   */
+  def findDuplicateSubtrees(root: TreeNode): List[TreeNode] = {
+    val buffer = new ListBuffer[TreeNode]()
+    val map = mutable.Map[String, Int]()
+
+    def traverse(root: TreeNode): String = {
+      if (root == null) return "#"
+
+      val left = traverse(root.left)
+      val right = traverse(root.right)
+
+      val rootStr = left + "," + right + "," + root.value
+      map(rootStr) = map.getOrElse(rootStr, 0) + 1
+      if (map(rootStr) == 2) {
+        buffer.append(root)
+      }
+      rootStr
+    }
+
+    traverse(root)
+    buffer.toList
+  }
 }
