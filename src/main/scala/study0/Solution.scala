@@ -9,6 +9,13 @@ class TreeNode(_value: Int = 0, _left: TreeNode = null, _right: TreeNode = null)
   var right: TreeNode = _right
 }
 
+class Node(var _value: Int) {
+  var value: Int = _value
+  var left: Node = null
+  var right: Node = null
+  var next: Node = null
+}
+
 object Solution {
   def main(args: Array[String]): Unit = {
     //    println(fib(20))
@@ -28,7 +35,9 @@ object Solution {
     //    println(merge(Array(Array())))
     //    println(threeSum(Array(0, 0, 0)))
     //    println(fourSum(Array(1, 0, -1, 0, -2, 2), 0))
-    println(superEggDrop(4, 5000))
+    //    println(superEggDrop(4, 5000))
+    //    println(constructMaximumBinaryTree(Array(3, 2, 1, 6, 0, 5)))
+    println(buildTree(Array(3, 9, 20, 15, 7), Array(9, 3, 15, 20, 7)))
   }
 
   /*
@@ -1501,5 +1510,226 @@ dp[k - 1][m - 1]就是楼下的楼层数，因为鸡蛋个数k减一，也就是
       }
     }
     m
+  }
+
+  /*
+226. 翻转二叉树
+翻转一棵二叉树。
+
+示例：
+
+输入：
+
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
+输出：
+
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+备注:
+这个问题是受到 Max Howell 的 原问题 启发的 ：
+
+谷歌：我们90％的工程师使用您编写的软件(Homebrew)，但是您却无法在面试时在白板上写出翻转二叉树这道题，这太糟糕了。
+   */
+  def invertTree(root: TreeNode): TreeNode = {
+    if (root == null) {
+      return null
+    }
+    val temp = root.left
+    root.left = root.right
+    root.right = temp
+
+    invertTree(root.left)
+    invertTree(root.right)
+    root
+  }
+
+  /*
+  116. 填充每个节点的下一个右侧节点指针
+给定一个完美二叉树，其所有叶子节点都在同一层，每个父节点都有两个子节点。二叉树定义如下：
+
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。
+
+初始状态下，所有 next 指针都被设置为 NULL。
+
+
+
+示例：
+
+
+
+输入：{"$id":"1","left":{"$id":"2","left":{"$id":"3","left":null,"next":null,"right":null,"val":4},"next":null,"right":{"$id":"4","left":null,"next":null,"right":null,"val":5},"val":2},"next":null,"right":{"$id":"5","left":{"$id":"6","left":null,"next":null,"right":null,"val":6},"next":null,"right":{"$id":"7","left":null,"next":null,"right":null,"val":7},"val":3},"val":1}
+
+输出：{"$id":"1","left":{"$id":"2","left":{"$id":"3","left":null,"next":{"$id":"4","left":null,"next":{"$id":"5","left":null,"next":{"$id":"6","left":null,"next":null,"right":null,"val":7},"right":null,"val":6},"right":null,"val":5},"right":null,"val":4},"next":{"$id":"7","left":{"$ref":"5"},"next":null,"right":{"$ref":"6"},"val":3},"right":{"$ref":"4"},"val":2},"next":null,"right":{"$ref":"7"},"val":1}
+
+解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。
+
+
+提示：
+
+你只能使用常量级额外空间。
+使用递归解题也符合要求，本题中递归程序占用的栈空间不算做额外的空间复杂度。
+   */
+  def connect(root: Node): Node = {
+    def connectTwoNode(node1: Node, node2: Node) {
+      if (node1 == null || node2 == null)
+        return
+
+      node1.next = node2
+
+      connectTwoNode(node1.left, node1.right)
+      connectTwoNode(node2.left, node2.right)
+      connectTwoNode(node1.right, node2.left)
+    }
+
+    if (root == null)
+      return null
+    connectTwoNode(root.left, root.right)
+    root
+  }
+
+  /*
+  114. 二叉树展开为链表
+给定一个二叉树，原地将它展开为一个单链表。
+
+
+
+例如，给定二叉树
+
+    1
+   / \
+  2   5
+ / \   \
+3   4   6
+将其展开为：
+
+1
+ \
+  2
+   \
+    3
+     \
+      4
+       \
+        5
+         \
+          6
+   */
+  def flatten(root: TreeNode): Unit = {
+    if (root == null)
+      return
+
+    flatten(root.left)
+    flatten(root.right)
+
+    val left = root.left
+    val right = root.right
+    root.left = null
+    root.right = left
+
+    var p = root
+    while (p.right != null) {
+      p = p.right
+    }
+    p.right = right
+  }
+
+  /*
+  654. 最大二叉树
+给定一个不含重复元素的整数数组。一个以此数组构建的最大二叉树定义如下：
+
+二叉树的根是数组中的最大元素。
+左子树是通过数组中最大值左边部分构造出的最大二叉树。
+右子树是通过数组中最大值右边部分构造出的最大二叉树。
+通过给定的数组构建最大二叉树，并且输出这个树的根节点。
+
+
+
+示例 ：
+
+输入：[3,2,1,6,0,5]
+输出：返回下面这棵树的根节点：
+
+      6
+    /   \
+   3     5
+    \    /
+     2  0
+       \
+        1
+
+
+提示：
+
+给定的数组的大小在 [1, 1000] 之间。
+   */
+  def constructMaximumBinaryTree(nums: Array[Int]): TreeNode = {
+    if (nums == null || nums.isEmpty) {
+      return null
+    }
+    var maxIdx = 0
+    for (i <- 1 until nums.length) {
+      if (nums(i) > nums(maxIdx)) {
+        maxIdx = i
+      }
+    }
+
+    val root = new TreeNode(nums(maxIdx))
+    root.left = constructMaximumBinaryTree(nums.slice(0, maxIdx))
+    root.right = constructMaximumBinaryTree(nums.slice(maxIdx + 1, nums.length))
+    root
+  }
+
+  /*
+  105. 从前序与中序遍历序列构造二叉树
+根据一棵树的前序遍历与中序遍历构造二叉树。
+
+注意:
+你可以假设树中没有重复的元素。
+
+例如，给出
+
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+返回如下的二叉树：
+
+    3
+   / \
+  9  20
+    /  \
+   */
+  def buildTree(preorder: Array[Int], inorder: Array[Int]): TreeNode = {
+    val map = mutable.Map[Int, Int]()
+    for (i <- 0 until inorder.length) {
+      map(inorder(i)) = i
+    }
+
+    def build(preStart: Int, preEnd: Int, inStart: Int, inEnd: Int): TreeNode = {
+      if (preStart > preEnd)
+        return null
+
+      val root = new TreeNode(preorder(preStart))
+      val rootIndex = map(preorder(preStart))
+
+      val leftSize = rootIndex - inStart
+      root.left = build(preStart + 1, preStart + leftSize, inStart, rootIndex - 1)
+      root.right = build(preStart + leftSize + 1, preEnd, rootIndex + 1, inEnd)
+      root
+
+    }
+
+    build(0, preorder.length - 1, 0, inorder.length - 1)
   }
 }
