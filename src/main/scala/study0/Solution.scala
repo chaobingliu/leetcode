@@ -123,14 +123,11 @@ F(N) = F(N - 1) + F(N - 2), 其中 N > 1.
 0 <= amount <= 104
    */
   def coinChange(coins: Array[Int], amount: Int): Int = {
-    val dp: Array[Int] = new Array[Int](amount + 1)
+    val dp: Array[Int] = Array.fill(amount + 1)(amount + 1)
     dp(0) = 0
     for (i <- 1 to amount) {
-      dp(i) = i + 1
-      for (coin <- coins) {
-        if (i - coin >= 0 && dp(i - coin) != (i - coin) + 1) {
-          dp(i) = Math.min(dp(i), dp(i - coin) + 1)
-        }
+      for (coin <- coins; if (i - coin) >= 0) {
+        dp(i) = Math.min(dp(i), dp(i - coin) + 1)
       }
     }
     if (dp(amount) == amount + 1) -1 else dp(amount)
