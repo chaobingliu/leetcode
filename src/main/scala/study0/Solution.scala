@@ -37,7 +37,8 @@ object Solution {
     //    println(fourSum(Array(1, 0, -1, 0, -2, 2), 0))
     //    println(superEggDrop(4, 5000))
     //    println(constructMaximumBinaryTree(Array(3, 2, 1, 6, 0, 5)))
-    println(buildTree_with_pre_in(Array(3, 9, 20, 15, 7), Array(9, 3, 15, 20, 7)))
+    //    println(buildTree_with_pre_in(Array(3, 9, 20, 15, 7), Array(9, 3, 15, 20, 7)))
+    println(canPartition(Array(1, 1)))
   }
 
   /*
@@ -1819,5 +1820,71 @@ struct Node {
 
     traverse(root)
     buffer.toList
+  }
+
+  /*
+  416. 分割等和子集
+给定一个只包含正整数的非空数组。是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
+
+注意:
+
+每个数组中的元素不会超过 100
+数组的大小不会超过 200
+示例 1:
+
+输入: [1, 5, 11, 5]
+
+输出: true
+
+解释: 数组可以分割成 [1, 5, 5] 和 [11].
+
+
+示例 2:
+
+输入: [1, 2, 3, 5]
+
+输出: false
+
+解释: 数组不能分割成两个元素和相等的子集.
+   */
+  def canPartition_normal(nums: Array[Int]): Boolean = {
+    var sum = nums.sum
+    if (sum % 2 == 1)
+      return false
+    sum = sum / 2
+
+    val n = nums.length
+    val dp = Array.ofDim[Boolean](n + 1, sum + 1)
+    for (i <- 0 to n) {
+      dp(i)(0) = true
+    }
+
+    for (i <- 1 to n) {
+      for (j <- Range(sum, 1, -1)) {
+        if (j - nums(i - 1) < 0) {
+          dp(i)(j) = dp(i - 1)(j)
+        } else {
+          dp(i)(j) = dp(i - 1)(j - nums(i - 1)) || dp(i - 1)(j)
+        }
+      }
+    }
+    dp(n)(sum)
+  }
+
+  def canPartition(nums: Array[Int]): Boolean = {
+    var sum = nums.sum
+    if (sum % 2 == 1)
+      return false
+    sum = sum / 2
+
+    val dp = new Array[Boolean](sum + 1)
+    dp(0) = true
+
+    for (i <- 0 until nums.length) {
+      for (j <- Range(sum, -1, -1); if (j - nums(i) >= 0)) {
+        dp(j) = dp(j - nums(i)) || dp(j)
+      }
+    }
+    dp(sum)
   }
 }
