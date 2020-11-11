@@ -18,7 +18,9 @@ class Node(var _value: Int) {
 object Solution {
   def main(args: Array[String]): Unit = {
     //    println(findTargetSumWays_backtrack(Array(0, 0, 0, 0, 0, 0, 0, 0, 1), 1))
-    println(minDistance("intention", "execution"))
+    //    println(minDistance("intention", "execution"))
+//    println(maxEnvelopes(Array(Array(5, 4), Array(6, 4), Array(6, 7), Array(2, 3))))
+    println(longestPalindromeSubseq("bbbab"))
 
   }
 
@@ -255,5 +257,132 @@ word1 和 word2 由小写英文字母组成
       }
     }
     dp(m)(n)
+  }
+
+  /*
+  354. 俄罗斯套娃信封问题
+给定一些标记了宽度和高度的信封，宽度和高度以整数对形式 (w, h) 出现。当另一个信封的宽度和高度都比这个信封大的时候，这个信封就可以放进另一个信封里，如同俄罗斯套娃一样。
+
+请计算最多能有多少个信封能组成一组“俄罗斯套娃”信封（即可以把一个信封放到另一个信封里面）。
+
+说明:
+不允许旋转信封。
+
+示例:
+
+输入: envelopes = [[5,4],[6,4],[6,7],[2,3]]
+输出: 3
+解释: 最多信封的个数为 3, 组合为: [2,3] => [5,4] => [6,7]。
+   */
+  def maxEnvelopes(envelopes: Array[Array[Int]]): Int = {
+    val sorted = envelopes.sortBy(r => (r(0), r(1)))(Ordering.Tuple2(Ordering.Int, Ordering.Int.reverse))
+    val n = envelopes.length
+
+    def lengthOfLIS(nums: Array[Int]): Int = {
+      var piles = 0
+      val n = nums.length
+      val top = new Array[Int](n)
+      for (i <- 0 until n) {
+        val poker = nums(i)
+        var left = 0
+        var right = piles
+        while (left < right) {
+          val mid = (left + right) / 2
+          if (top(mid) >= poker) {
+            right = mid
+          } else {
+            left = mid + 1
+          }
+        }
+        if (left == piles) piles += 1
+        top(left) = poker
+      }
+      return piles
+    }
+
+    val height: Array[Int] = new Array[Int](n)
+    for (i <- 0 until n) {
+      height(i) = sorted(i)(1)
+    }
+
+    lengthOfLIS(height)
+  }
+
+  /*
+  53. 最大子序和
+给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+
+示例:
+
+输入: [-2,1,-3,4,-1,2,1,-5,4]
+输出: 6
+解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+进阶:
+
+如果你已经实现复杂度为 O(n) 的解法，尝试使用更为精妙的分治法求解。
+   */
+  def maxSubArray(nums: Array[Int]): Int = {
+    val n = nums.length
+    if (n == 0) return 0
+
+    var pre = nums(0)
+    var maxSum = nums(0)
+    for (i <- 1 until n) {
+      pre = Math.max(nums(i), pre + nums(i))
+      maxSum = Math.max(maxSum, pre)
+    }
+    maxSum
+  }
+
+  /*
+  516. 最长回文子序列
+给定一个字符串 s ，找到其中最长的回文子序列，并返回该序列的长度。可以假设 s 的最大长度为 1000 。
+
+
+
+示例 1:
+输入:
+
+"bbbab"
+输出:
+
+4
+一个可能的最长回文子序列为 "bbbb"。
+
+示例 2:
+输入:
+
+"cbbd"
+输出:
+
+2
+一个可能的最长回文子序列为 "bb"。
+
+
+
+提示：
+
+1 <= s.length <= 1000
+s 只包含小写英文字母
+   */
+  def longestPalindromeSubseq(s: String): Int = {
+    val n = s.length
+    if (n == 1) return 1
+    val dp = Array.ofDim[Int](n, n)
+
+    for (i <- Range(n - 1, -1, -1)) {
+      for (j <- i until n) {
+        if (i == j) {
+          dp(i)(j) = 1
+        } else {
+          if (s.charAt(i) == s.charAt(j)) {
+            dp(i)(j) = dp(i + 1)(j - 1) + 2
+          } else {
+            dp(i)(j) = Math.max(dp(i)(j - 1), dp(i + 1)(j))
+          }
+        }
+      }
+    }
+    dp(0)(n - 1)
   }
 }
