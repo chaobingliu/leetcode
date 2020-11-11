@@ -38,7 +38,8 @@ object Solution {
     //    println(superEggDrop(4, 5000))
     //    println(constructMaximumBinaryTree(Array(3, 2, 1, 6, 0, 5)))
     //    println(buildTree_with_pre_in(Array(3, 9, 20, 15, 7), Array(9, 3, 15, 20, 7)))
-    println(canPartition(Array(1, 1)))
+    //    println(canPartition(Array(1, 1)))
+    println(eraseOverlapIntervals(Array(Array(1, 100), Array(11, 22), Array(1, 11), Array(2, 12))))
   }
 
   /*
@@ -1949,5 +1950,104 @@ struct Node {
       }
     }
     dp(amount)
+  }
+
+  /*
+  435. 无重叠区间
+给定一个区间的集合，找到需要移除区间的最小数量，使剩余区间互不重叠。
+
+注意:
+
+可以认为区间的终点总是大于它的起点。
+区间 [1,2] 和 [2,3] 的边界相互“接触”，但没有相互重叠。
+示例 1:
+
+输入: [ [1,2], [2,3], [3,4], [1,3] ]
+
+输出: 1
+
+解释: 移除 [1,3] 后，剩下的区间没有重叠。
+示例 2:
+
+输入: [ [1,2], [1,2], [1,2] ]
+
+输出: 2
+
+解释: 你需要移除两个 [1,2] 来使剩下的区间没有重叠。
+示例 3:
+
+输入: [ [1,2], [2,3] ]
+
+输出: 0
+
+解释: 你不需要移除任何区间，因为它们已经是无重叠的了。
+   */
+  def eraseOverlapIntervals(intervals: Array[Array[Int]]): Int = {
+    if (intervals.length == 0)
+      return 0
+    val sorted = intervals.sortBy(r => (r(1)))(Ordering.Int)
+
+    var count = 1
+    var pre_end = sorted(0)(1)
+    for (arr <- sorted) {
+      if (arr(0) >= pre_end) {
+        count += 1
+        pre_end = arr(1)
+      }
+    }
+    sorted.length - count
+  }
+
+  /*
+  452. 用最少数量的箭引爆气球
+在二维空间中有许多球形的气球。对于每个气球，提供的输入是水平方向上，气球直径的开始和结束坐标。由于它是水平的，所以纵坐标并不重要，因此只要知道开始和结束的横坐标就足够了。开始坐标总是小于结束坐标。
+
+一支弓箭可以沿着 x 轴从不同点完全垂直地射出。在坐标 x 处射出一支箭，若有一个气球的直径的开始和结束坐标为 xstart，xend， 且满足  xstart ≤ x ≤ xend，则该气球会被引爆。可以射出的弓箭的数量没有限制。 弓箭一旦被射出之后，可以无限地前进。我们想找到使得所有气球全部被引爆，所需的弓箭的最小数量。
+
+给你一个数组 points ，其中 points [i] = [xstart,xend] ，返回引爆所有气球所必须射出的最小弓箭数。
+
+
+示例 1：
+
+输入：points = [[10,16],[2,8],[1,6],[7,12]]
+输出：2
+解释：对于该样例，x = 6 可以射爆 [2,8],[1,6] 两个气球，以及 x = 11 射爆另外两个气球
+示例 2：
+
+输入：points = [[1,2],[3,4],[5,6],[7,8]]
+输出：4
+示例 3：
+
+输入：points = [[1,2],[2,3],[3,4],[4,5]]
+输出：2
+示例 4：
+
+输入：points = [[1,2]]
+输出：1
+示例 5：
+
+输入：points = [[2,3],[2,3]]
+输出：1
+
+
+提示：
+
+0 <= points.length <= 104
+points[i].length == 2
+-231 <= xstart < xend <= 231 - 1
+   */
+  def findMinArrowShots(points: Array[Array[Int]]): Int = {
+    if (points.length == 0)
+      return 0
+    val sorted = points.sortBy(r => (r(1)))(Ordering.Int)
+    var count = 1
+    var pre_end = sorted(0)(1)
+    for (p <- sorted) {
+      if (p(0) > pre_end) {
+        count += 1
+        pre_end = p(1)
+      }
+    }
+    count
   }
 }
