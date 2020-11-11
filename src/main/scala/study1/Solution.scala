@@ -22,7 +22,7 @@ object Solution {
     //    println(maxEnvelopes(Array(Array(5, 4), Array(6, 4), Array(6, 7), Array(2, 3))))
     //    println(longestPalindromeSubseq("bbbab"))
     //    println(longestCommonSubsequence_bottom("abcde", "ace"))
-
+    println("abc".substring(0, 0))
   }
 
   /*
@@ -534,11 +534,11 @@ s 只包含小写英文字母
     val m = s1.length
     val n = s2.length
     val dp = Array.ofDim[Int](m + 1, n + 1)
-    for (i <- 0 to m) {
-      dp(i)(0) = s1.substring(0, i).sum
+    for (i <- 1 to m) {
+      dp(i)(0) = dp(i - 1)(0) + s1.charAt(i - 1)
     }
-    for (j <- 0 to n) {
-      dp(0)(j) = s2.substring(0, j).sum
+    for (j <- 1 to n) {
+      dp(0)(j) = dp(0)(j - 1) + s2.charAt(j - 1)
     }
 
     for (i <- 1 to m) {
