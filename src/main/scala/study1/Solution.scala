@@ -19,8 +19,9 @@ object Solution {
   def main(args: Array[String]): Unit = {
     //    println(findTargetSumWays_backtrack(Array(0, 0, 0, 0, 0, 0, 0, 0, 1), 1))
     //    println(minDistance("intention", "execution"))
-//    println(maxEnvelopes(Array(Array(5, 4), Array(6, 4), Array(6, 7), Array(2, 3))))
-    println(longestPalindromeSubseq("bbbab"))
+    //    println(maxEnvelopes(Array(Array(5, 4), Array(6, 4), Array(6, 7), Array(2, 3))))
+    //    println(longestPalindromeSubseq("bbbab"))
+    //    println(longestCommonSubsequence_bottom("abcde", "ace"))
 
   }
 
@@ -384,5 +385,171 @@ s 只包含小写英文字母
       }
     }
     dp(0)(n - 1)
+  }
+
+  /*
+  1143. 最长公共子序列
+给定两个字符串 text1 和 text2，返回这两个字符串的最长公共子序列的长度。
+
+一个字符串的 子序列 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
+例如，"ace" 是 "abcde" 的子序列，但 "aec" 不是 "abcde" 的子序列。两个字符串的「公共子序列」是这两个字符串所共同拥有的子序列。
+
+若这两个字符串没有公共子序列，则返回 0。
+
+
+
+示例 1:
+
+输入：text1 = "abcde", text2 = "ace"
+输出：3
+解释：最长公共子序列是 "ace"，它的长度为 3。
+示例 2:
+
+输入：text1 = "abc", text2 = "abc"
+输出：3
+解释：最长公共子序列是 "abc"，它的长度为 3。
+示例 3:
+
+输入：text1 = "abc", text2 = "def"
+输出：0
+解释：两个字符串没有公共子序列，返回 0。
+
+
+提示:
+
+1 <= text1.length <= 1000
+1 <= text2.length <= 1000
+输入的字符串只含有小写英文字符。
+   */
+  def longestCommonSubsequence_top(text1: String, text2: String): Int = {
+    val dict = mutable.Map[(Int, Int), Int]()
+
+    def dp(i: Int, j: Int): Int = {
+      if (i == text1.length || j == text2.length) return 0
+      if (dict.contains((i, j))) return dict((i, j))
+
+      if (text1.charAt(i) == text2.charAt(j)) {
+        val res = dp(i + 1, j + 1) + 1
+        dict((i, j)) = res
+        res
+      } else {
+        val res = Math.max(dp(i, j + 1), dp(i + 1, j))
+        dict((i, j)) = res
+        res
+      }
+    }
+
+    dp(0, 0)
+  }
+
+  def longestCommonSubsequence_bottom(text1: String, text2: String): Int = {
+    val m = text1.length
+    val n = text2.length
+    val dp = Array.ofDim[Int](m + 1, n + 1)
+
+    for (i <- 1 to m) {
+      for (j <- 1 to n) {
+        if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+          dp(i)(j) = dp(i - 1)(j - 1) + 1
+        } else {
+          dp(i)(j) = Math.max(dp(i)(j - 1), dp(i - 1)(j))
+        }
+      }
+    }
+    dp(m)(n)
+  }
+
+  /*
+  583. 两个字符串的删除操作
+给定两个单词 word1 和 word2，找到使得 word1 和 word2 相同所需的最小步数，每步可以删除任意一个字符串中的一个字符。
+
+
+
+示例：
+
+输入: "sea", "eat"
+输出: 2
+解释: 第一步将"sea"变为"ea"，第二步将"eat"变为"ea"
+
+
+提示：
+
+给定单词的长度不超过500。
+给定单词中的字符只含有小写字母。
+   */
+  def minStrDistance(word1: String, word2: String): Int = {
+    val t = longestCommonSubsequence_bottom(word1, word2)
+    val m = word1.length
+    val n = word2.length
+    m - t + n - t
+  }
+
+  /*
+  712. 两个字符串的最小ASCII删除和
+给定两个字符串s1, s2，找到使两个字符串相等所需删除字符的ASCII值的最小和。
+
+示例 1:
+
+输入: s1 = "sea", s2 = "eat"
+输出: 231
+解释: 在 "sea" 中删除 "s" 并将 "s" 的值(115)加入总和。
+在 "eat" 中删除 "t" 并将 116 加入总和。
+结束时，两个字符串相等，115 + 116 = 231 就是符合条件的最小和。
+示例 2:
+
+输入: s1 = "delete", s2 = "leet"
+输出: 403
+解释: 在 "delete" 中删除 "dee" 字符串变成 "let"，
+将 100[d]+101[e]+101[e] 加入总和。在 "leet" 中删除 "e" 将 101[e] 加入总和。
+结束时，两个字符串都等于 "let"，结果即为 100+101+101+101 = 403 。
+如果改为将两个字符串转换为 "lee" 或 "eet"，我们会得到 433 或 417 的结果，比答案更大。
+注意:
+
+0 < s1.length, s2.length <= 1000。
+所有字符串中的字符ASCII值在[97, 122]之间。
+   */
+  def minimumDeleteSum_top(s1: String, s2: String): Int = {
+    val m = s1.length
+    val n = s2.length
+    val dict = mutable.Map[(Int, Int), Int]()
+
+    def dp(i: Int, j: Int): Int = {
+      if (i == m) return s2.substring(j, n).sum
+      if (j == n) return s1.substring(i, m).sum
+
+      if (dict.contains((i, j))) return dict((i, j))
+      if (s1.charAt(i) == s2.charAt(j)) {
+        return dp(i + 1, j + 1)
+      } else {
+        val t = Math.min(s1.charAt(i) + dp(i + 1, j), s2.charAt(j) + dp(i, j + 1))
+        dict((i, j)) = t
+        t
+      }
+    }
+
+    dp(0, 0)
+  }
+
+  def minimumDeleteSum_bottom(s1: String, s2: String): Int = {
+    val m = s1.length
+    val n = s2.length
+    val dp = Array.ofDim[Int](m + 1, n + 1)
+    for (i <- 0 to m) {
+      dp(i)(0) = s1.substring(0, i).sum
+    }
+    for (j <- 0 to n) {
+      dp(0)(j) = s2.substring(0, j).sum
+    }
+
+    for (i <- 1 to m) {
+      for (j <- 1 to n) {
+        if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
+          dp(i)(j) = dp(i - 1)(j - 1)
+        } else {
+          dp(i)(j) = Math.min(s1.charAt(i - 1) + dp(i - 1)(j), s2.charAt(j - 1) + dp(i)(j - 1))
+        }
+      }
+    }
+    dp(m)(n)
   }
 }
