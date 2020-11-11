@@ -17,7 +17,8 @@ class Node(var _value: Int) {
 
 object Solution {
   def main(args: Array[String]): Unit = {
-    println(findTargetSumWays_backtrack(Array(0, 0, 0, 0, 0, 0, 0, 0, 1), 1))
+    //    println(findTargetSumWays_backtrack(Array(0, 0, 0, 0, 0, 0, 0, 0, 1), 1))
+    println(minDistance("intention", "execution"))
 
   }
 
@@ -156,7 +157,7 @@ exection -> execution (插入 'u')
 0 <= word1.length, word2.length <= 500
 word1 和 word2 由小写英文字母组成
    */
-  def minDistance(word1: String, word2: String): Int = {
+  def minDistance_dp(word1: String, word2: String): Int = {
     val dict = mutable.Map[(Int, Int), Int]()
 
     def dp(i: Int, j: Int): Int = {
@@ -177,5 +178,82 @@ word1 和 word2 由小写英文字母组成
     }
 
     dp(word1.length - 1, word2.length - 1)
+  }
+
+  object OpTypeEnum extends Enumeration {
+    val opTypeEnum = Value
+    val ADD, DELETE, REPLACE = Value
+  }
+
+  case class OpNode(value: Int, op: OpTypeEnum.Value = null, idx: (Int, Int) = (0, 0))
+
+  def minDistance_step(word1: String, word2: String): Int = {
+    val m = word1.length
+    val n = word2.length
+
+    val dp = Array.ofDim[OpNode](m + 1, n + 1)
+    for (i <- 0 to m) {
+      dp(i)(0) = OpNode(i)
+    }
+
+    for (j <- 0 to n) {
+      dp(0)(j) = OpNode(j)
+    }
+
+    for (i <- 1 to m) {
+      for (j <- 1 to n) {
+        if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+          dp(i)(j) = dp(i - 1)(j - 1)
+        } else {
+          // 插入
+          val A = OpNode(dp(i)(j - 1).value + 1, OpTypeEnum.ADD, (i, j - 1))
+          // 删除
+          val B = OpNode(dp(i - 1)(j).value + 1, OpTypeEnum.DELETE, (i - 1, j))
+          // 替换
+          val C = OpNode(dp(i - 1)(j - 1).value + 1, OpTypeEnum.REPLACE, (i - 1, j - 1))
+          if (A.value < B.value) {
+            dp(i)(j) = if (A.value < C.value) A else C
+          } else {
+            dp(i)(j) = if (B.value < C.value) B else C
+          }
+        }
+      }
+    }
+    var ops = m
+    var ope = n
+    val builder: mutable.StringBuilder = new mutable.StringBuilder("")
+    while (ops != 0 && ope != 0) {
+      val temp = dp(ops)(ope)
+      builder.append(s"(${ops} ${ope}) ${temp.op} ->")
+      ops = temp.idx._1
+      ope = temp.idx._2
+    }
+    println(builder)
+    dp(m)(n).value
+  }
+
+  def minDistance(word1: String, word2: String): Int = {
+    val m = word1.length
+    val n = word2.length
+
+    val dp = Array.ofDim[Int](m + 1, n + 1)
+    for (i <- 0 to m) {
+      dp(i)(0) = i
+    }
+
+    for (j <- 0 to n) {
+      dp(0)(j) = j
+    }
+
+    for (i <- 1 to m) {
+      for (j <- 1 to n) {
+        if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+          dp(i)(j) = dp(i - 1)(j - 1)
+        } else {
+          dp(i)(j) = Math.min(Math.min(dp(i)(j - 1), dp(i - 1)(j)), dp(i - 1)(j - 1)) + 1
+        }
+      }
+    }
+    dp(m)(n)
   }
 }
