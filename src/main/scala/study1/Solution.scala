@@ -25,7 +25,8 @@ object Solution {
     //    println("abc".substring(0, 0))
     //    println(jump(Array(2, 3, 1, 1, 4)))
     //    println(stoneGame(Array(5, 3, 4, 5)))
-    println(maxA(7))
+    //    println(maxA(7))
+    println(isMatch("aab", "c*a*b"))
   }
 
   /*
@@ -765,22 +766,131 @@ dp[i][j]=max(piles[i]−dp[i+1][j],piles[j]−dp[i][j−1])
     dp(n - 1) > 0
   }
 
-  def maxA(N: Int): Int = {
+  def maxA_normal(N: Int): Int = {
+    val dict = mutable.Map[(Int, Int, Int), Int]()
+
     def dp(n: Int, aNum: Int, copy: Int): Int = {
       if (n <= 0) return aNum
+      if (dict.contains((n, aNum, copy))) return dict((n, aNum, copy))
+
       // 在屏幕写字母A
       val A = dp(n - 1, aNum + 1, copy)
       // 按下Ctrl-V 粘贴
       val B = dp(n - 1, aNum + copy, copy)
       // 按下选中+复制
       val C = dp(n - 2, aNum, aNum)
-      max(A, B, C)
+      val temp = max(A, B, C)
+      dict((n, aNum, copy)) = temp
+      temp
     }
 
     dp(N, 0, 0)
   }
 
+  def maxA(N: Int): Int = {
+    val dp = new Array[Int](N + 1)
+    for (i <- 1 to N) {
+      dp(i) = dp(i - 1) + 1
+      if (i > 2) {
+        for (j <- 2 to i) {
+          dp(i) = Math.max(dp(i), dp(j - 2) * (i - j + 1))
+        }
+      }
+    }
+    dp(N)
+
+  }
+
   def max(a: Int, b: Int, c: Int): Int = {
     Math.max(a, Math.max(b, c))
+  }
+
+  /*
+  10. 正则表达式匹配
+给你一个字符串 s 和一个字符规律 p，请你来实现一个支持 '.' 和 '*' 的正则表达式匹配。
+
+'.' 匹配任意单个字符
+'*' 匹配零个或多个前面的那一个元素
+所谓匹配，是要涵盖 整个 字符串 s的，而不是部分字符串。
+
+
+示例 1：
+
+输入：s = "aa" p = "a"
+输出：false
+解释："a" 无法匹配 "aa" 整个字符串。
+示例 2:
+
+输入：s = "aa" p = "a*"
+输出：true
+解释：因为 '*' 代表可以匹配零个或多个前面的那一个元素, 在这里前面的元素就是 'a'。因此，字符串 "aa" 可被视为 'a' 重复了一次。
+示例 3：
+
+输入：s = "ab" p = ".*"
+输出：true
+解释：".*" 表示可匹配零个或多个（'*'）任意字符（'.'）。
+示例 4：
+
+输入：s = "aab" p = "c*a*b"
+输出：true
+解释：因为 '*' 表示零个或多个，这里 'c' 为 0 个, 'a' 被重复一次。因此可以匹配字符串 "aab"。
+示例 5：
+
+输入：s = "mississippi" p = "mis*is*p*."
+输出：false
+
+
+提示：
+
+0 <= s.length <= 20
+0 <= p.length <= 30
+s 可能为空，且只包含从 a-z 的小写字母。
+p 可能为空，且只包含从 a-z 的小写字母，以及字符 . 和 *。
+保证每次出现字符 * 时，前面都匹配到有效的字符
+   */
+  def isMatch_normal(s: String, p: String): Boolean = {
+    val dict = mutable.Map[(String, String), Boolean]()
+
+    def dp(s: String, p: String): Boolean = {
+      if (p.isEmpty) return s.isEmpty
+      if (dict.contains((s, p))) return dict((s, p))
+
+      val firstMatch: Boolean = !s.isEmpty && (s(0) == p(0) || p(0) == '.')
+      if (p.length > 1 && p(1) == '*') {
+        val temp = isMatch(s, p.substring(2)) || (firstMatch && isMatch(s.substring(1), p))
+        dict((s, p)) = temp
+        temp
+      } else {
+        val temp = firstMatch && isMatch(s.substring(1), p.substring(1))
+        dict((s, p)) = temp
+        temp
+      }
+    }
+
+    dp(s, p)
+  }
+
+  def isMatch(s: String, p: String): Boolean = {
+    val m = s.length
+    val n = p.length
+    val dict = mutable.Map[(Int, Int), Boolean]()
+
+    def dp(i: Int, j: Int): Boolean = {
+      if (j == n) return i == m
+      if (dict.contains((i, j))) return dict((i, j))
+
+      val firstMath = i < m && (p(j) == s(i) || p(j) == '.')
+      if (j <= n - 2 && p(j + 1) == '*') {
+        val temp = dp(i, j + 2) || (firstMath && dp(i + 1, j))
+        dict((i, j)) = temp
+        temp
+      } else {
+        val temp = firstMath && dp(i + 1, j + 1)
+        dict((i, j)) = temp
+        temp
+      }
+    }
+
+    dp(0, 0)
   }
 }
