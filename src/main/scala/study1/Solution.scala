@@ -663,6 +663,14 @@ piles.length 是偶数。
 1 <= piles[i] <= 500
 sum(piles) 是奇数。
    */
+  /*
+dp[i][j].fir 表示，对于 piles[i...j] 这部分石头堆，先手能获得的最高分数。
+dp[i][j].sec 表示，对于 piles[i...j] 这部分石头堆，后手能获得的最高分数。
+
+举例理解一下，假设 piles = [3, 9, 1, 2]，索引从 0 开始
+dp[0][1].fir = 9 意味着：面对石头堆 [3, 9]，先手最终能够获得 9 分。
+dp[1][3].sec = 2 意味着：面对石头堆 [9, 1, 2]，后手最终能够获得 2 分。
+   */
   def stoneGame_normal(piles: Array[Int]): Boolean = {
     val n = piles.length
     val dp = Array.ofDim[(Int, Int)](n, n)
@@ -707,6 +715,23 @@ sum(piles) 是奇数。
     dp(n - 1)._1 > dp(n - 1)._2
   }
 
+  /*
+定义二维数组 \textit{dp}dp，其行数和列数都等于石子的堆数，\textit{dp}[i][j]dp[i][j] 表示当剩下的石子堆为下标 ii 到下标 jj 时，当前玩家与另一个玩家的石子数量之差的最大值，注意当前玩家不一定是先手 \text{Alex}Alex。
+
+只有当 i \le ji≤j 时，剩下的石子堆才有意义，因此当 i>ji>j 时，\textit{dp}[i][j]=0dp[i][j]=0。
+
+当 i=ji=j 时，只剩下一堆石子，当前玩家只能取走这堆石子，因此对于所有 0 \le i < \textit{nums}.\text{length}0≤i<nums.length，都有 \textit{dp}[i][i]=\textit{piles}[i]dp[i][i]=piles[i]。
+
+当 i<ji<j 时，当前玩家可以选择取走 \textit{piles}[i]piles[i] 或 \textit{piles}[j]piles[j]，然后轮到另一个玩家在剩下的石子堆中取走石子。在两种方案中，当前玩家会选择最优的方案，使得自己的石子数量最大化。因此可以得到如下状态转移方程：
+
+\textit{dp}[i][j]=\max(\textit{piles}[i] - \textit{dp}[i + 1][j], \textit{piles}[j] - \textit{dp}[i][j - 1])
+dp[i][j]=max(piles[i]−dp[i+1][j],piles[j]−dp[i][j−1])
+
+作者：LeetCode-Solution
+链接：https://leetcode-cn.com/problems/stone-game/solution/shi-zi-you-xi-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+   */
   def stoneGame_normal3(piles: Array[Int]): Boolean = {
     val n = piles.length
     val dp = Array.ofDim[Int](n, n)
