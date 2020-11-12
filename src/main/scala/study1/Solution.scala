@@ -24,7 +24,8 @@ object Solution {
     //    println(longestCommonSubsequence_bottom("abcde", "ace"))
     //    println("abc".substring(0, 0))
     //    println(jump(Array(2, 3, 1, 1, 4)))
-    println(stoneGame(Array(5, 3, 4, 5)))
+    //    println(stoneGame(Array(5, 3, 4, 5)))
+    println(maxA(7))
   }
 
   /*
@@ -762,5 +763,24 @@ dp[i][j]=max(piles[i]−dp[i+1][j],piles[j]−dp[i][j−1])
       }
     }
     dp(n - 1) > 0
+  }
+
+  def maxA(N: Int): Int = {
+    def dp(n: Int, aNum: Int, copy: Int): Int = {
+      if (n <= 0) return aNum
+      // 在屏幕写字母A
+      val A = dp(n - 1, aNum + 1, copy)
+      // 按下Ctrl-V 粘贴
+      val B = dp(n - 1, aNum + copy, copy)
+      // 按下选中+复制
+      val C = dp(n - 2, aNum, aNum)
+      max(A, B, C)
+    }
+
+    dp(N, 0, 0)
+  }
+
+  def max(a: Int, b: Int, c: Int): Int = {
+    Math.max(a, Math.max(b, c))
   }
 }
