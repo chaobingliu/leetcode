@@ -935,4 +935,114 @@ p 可能为空，且只包含从 a-z 的小写字母，以及字符 . 和 *。
 
   }
 
+  /*
+28. 实现 strStr()
+实现 strStr() 函数。
+
+给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。
+
+示例 1:
+
+输入: haystack = "hello", needle = "ll"
+输出: 2
+示例 2:
+
+输入: haystack = "aaaaa", needle = "bba"
+输出: -1
+说明:
+
+当 needle 是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
+
+对于本题而言，当 needle 是空字符串时我们应当返回 0 。这与C语言的 strstr() 以及 Java的 indexOf() 定义相符。
+ */
+  def strStr(haystack: String, needle: String): Int = {
+    def kmp(pat: String): Array[Array[Int]] = {
+      val m = pat.length
+      val dp = Array.ofDim[Int](m, 256)
+      dp(0)(pat.charAt(0)) = 1
+      var x = 0
+      for (j <- 1 until m) {
+        for (c <- 0 until 256) {
+          if (pat(j) == c) {
+            dp(j)(c) = 1
+          } else {
+            dp(j)(c) = dp(x)(c)
+          }
+        }
+        dp(j)(pat(j)) = j + 1
+        x = dp(x)(pat(j))
+      }
+      dp
+    }
+
+    if (needle.isEmpty) {
+      return 0
+    }
+    val dp = kmp(needle)
+    val m = haystack.length
+    val n = needle.length
+    var j = 0
+    for (i <- 0 until m) {
+      j = dp(j)(haystack(i))
+      if (j == n) {
+        return i - n + 1
+      }
+    }
+    -1
+  }
+
+  /*
+  1312. 让字符串成为回文串的最少插入次数
+给你一个字符串 s ，每一次操作你都可以在字符串的任意位置插入任意字符。
+
+请你返回让 s 成为回文串的 最少操作次数 。
+
+「回文串」是正读和反读都相同的字符串。
+
+
+
+示例 1：
+
+输入：s = "zzazz"
+输出：0
+解释：字符串 "zzazz" 已经是回文串了，所以不需要做任何插入操作。
+示例 2：
+
+输入：s = "mbadm"
+输出：2
+解释：字符串可变为 "mbdadbm" 或者 "mdbabdm" 。
+示例 3：
+
+输入：s = "leetcode"
+输出：5
+解释：插入 5 个字符后字符串变为 "leetcodocteel" 。
+示例 4：
+
+输入：s = "g"
+输出：0
+示例 5：
+
+输入：s = "no"
+输出：1
+
+
+提示：
+
+1 <= s.length <= 500
+s 中所有字符都是小写字母。
+   */
+  def minInsertions(s: String): Int = {
+    val n = s.length
+    val dp = Array.ofDim[Int](n, n)
+    for (i <- Range(n - 2, -1, -1)) {
+      for (j <- i + 1 until n) {
+        if (s(i) == s(j)) {
+          dp(i)(j) = dp(i + 1)(j - 1)
+        } else {
+          dp(i)(j) = Math.min(dp(i)(j - 1), dp(i + 1)(j)) + 1
+        }
+      }
+    }
+    dp(0)(n - 1)
+  }
 }
