@@ -40,7 +40,6 @@ object Solution {
     //    println(buildTree_with_pre_in(Array(3, 9, 20, 15, 7), Array(9, 3, 15, 20, 7)))
     //    println(canPartition(Array(1, 1)))
     //    println(eraseOverlapIntervals(Array(Array(1, 100), Array(11, 22), Array(1, 11), Array(2, 12))))
-    println(strStr("", "aa"))
   }
 
   /*
