@@ -143,6 +143,20 @@ k 是一个正整数，它的值小于或等于链表的长度。
 进阶：
 你能否用 O(n) 时间复杂度和 O(1) 空间复杂度解决此题？
    */
+  def isPalindrome_normal(head: ListNode): Boolean = {
+    var left = head
+
+    def traverse(head: ListNode): Boolean = {
+      if (head == null) return true
+      var res = traverse(head.next)
+      res = res && left.x == head.x
+      left = left.next
+      res
+    }
+
+    traverse(head)
+  }
+
   def isPalindrome(head: ListNode): Boolean = {
     var slow, fast = head
     while (fast != null && fast.next != null) {
