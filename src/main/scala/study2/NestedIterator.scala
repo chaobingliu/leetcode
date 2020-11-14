@@ -71,3 +71,22 @@ class NestedIterator(_nestedList: List[NestedInteger]) {
 
   }
 }
+
+class NestedIteratorLazy(_nestedList: List[NestedInteger]) {
+  val buffer: mutable.Buffer[NestedInteger] = _nestedList.toBuffer
+
+  def next(): Int = {
+    buffer.remove(0).getInteger
+  }
+
+  def hasNext(): Boolean = {
+    while (!buffer.isEmpty && !buffer(0).isInteger) {
+      val list = buffer.remove(0).getList
+      for (i <- Range(list.length - 1, -1, -1)) {
+        buffer.insert(0, list(i))
+      }
+    }
+    !buffer.isEmpty
+  }
+
+}
