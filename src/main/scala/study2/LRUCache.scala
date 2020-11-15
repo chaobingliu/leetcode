@@ -47,7 +47,7 @@ lRUCache.get(4);    // 返回 4
 class LRUCache(_capacity: Int) {
   val capacity = _capacity
   val cache = new DoubleLink()
-  val map = mutable.Map[Int, Node]()
+  val map = mutable.Map[Int, DoubleNode]()
 
 
   def get(key: Int): Int = {
@@ -76,7 +76,7 @@ class LRUCache(_capacity: Int) {
   }
 
   def addRecently(key: Int, value: Int): Unit = {
-    val node = Node(key, value)
+    val node = DoubleNode(key, value)
     cache.addNode(node)
     map(key) = node
   }
@@ -87,16 +87,16 @@ class LRUCache(_capacity: Int) {
   }
 }
 
-case class Node(key: Int, var value: Int, var prev: Node = null, var next: Node = null)
+case class DoubleNode(key: Int, var value: Int, var prev: DoubleNode = null, var next: DoubleNode = null)
 
 class DoubleLink {
-  val head = Node(0, 0)
-  val tail = Node(0, 0)
+  val head = DoubleNode(0, 0)
+  val tail = DoubleNode(0, 0)
   head.next = tail
   tail.prev = head
   var size = 0
 
-  def addNode(node: Node): Unit = {
+  def addNode(node: DoubleNode): Unit = {
     node.prev = tail.prev
     node.next = tail
     tail.prev.next = node
@@ -104,13 +104,13 @@ class DoubleLink {
     size += 1
   }
 
-  def removeNode(node: Node): Unit = {
+  def removeNode(node: DoubleNode): Unit = {
     node.next.prev = node.prev
     node.prev.next = node.next
     size -= 1
   }
 
-  def removeFirst(): Node = {
+  def removeFirst(): DoubleNode = {
     if (head.next == tail) return null
     val firstNode = head.next
     removeNode(firstNode)

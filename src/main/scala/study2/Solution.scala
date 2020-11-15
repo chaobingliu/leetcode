@@ -36,10 +36,6 @@ object Solution {
     a.left = b
     a.right = c
     //    println(isValidBST(a))
-
-    val codec = new Codec
-    println(codec.serialize(codec.deserialize_pre("1,2,3,#,#,4,5")))
-
   }
 
   /*

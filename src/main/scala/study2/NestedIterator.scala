@@ -4,7 +4,7 @@ import scala.collection.mutable
 
 
 class NestedInteger {
-  var value: Int = null
+  var value: Int = 0
   var list: List[NestedInteger] = null
 
   def this(_value: Int) {
