@@ -24,7 +24,7 @@ class MyQueue {
     s2.pop()
   }
 
-  def isEmpty(): Boolean = {
+  def empty(): Boolean = {
     s1.isEmpty && s2.isEmpty
   }
 

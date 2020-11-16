@@ -8,7 +8,7 @@ class MyStack {
 
   def push(x: Int): Unit = {
     q.enqueue(x)
-    topElem = q.front
+    topElem = x
   }
 
   def top(): Int = {
@@ -26,7 +26,7 @@ class MyStack {
     q.dequeue()
   }
 
-  def isEmpty(): Boolean = {
+  def empty(): Boolean = {
     q.isEmpty
   }
 
