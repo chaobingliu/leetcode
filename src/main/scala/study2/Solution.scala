@@ -548,4 +548,67 @@ p、q 为不同节点且均存在于给定的二叉树中。
     }
     countNodes(root.left) + countNodes(root.right) + 1
   }
+
+  /*
+  130. 被围绕的区域
+给定一个二维的矩阵，包含 'X' 和 'O'（字母 O）。
+
+找到所有被 'X' 围绕的区域，并将这些区域里所有的 'O' 用 'X' 填充。
+
+示例:
+
+X X X X
+X O O X
+X X O X
+X O X X
+运行你的函数后，矩阵变为：
+
+X X X X
+X X X X
+X X X X
+X O X X
+解释:
+
+被围绕的区间不会存在于边界上，换句话说，任何边界上的 'O' 都不会被填充为 'X'。 任何不在边界上，或不与边界上的 'O' 相连的 'O' 最终都会被填充为 'X'。如果两个元素在水平或垂直方向相邻，则称它们是“相连”的。
+   */
+  def solve(board: Array[Array[Char]]): Unit = {
+    if (board.length == 0) return
+
+    val m = board.length
+    val n = board(0).length
+    val uf = new UF(m * n + 1)
+    val dummy = m * n
+    // 将首列和未列的 O 与dummyh连通
+    for (i <- 0 until m) {
+      if (board(i)(0) == 'O') uf.union(i * n, dummy)
+      if (board(i)(n - 1) == 'O') uf.union(i * n + n - 1, dummy)
+    }
+    // 将首行和未行的 O 与dummy连通
+    for (j <- 0 until n) {
+      if (board(0)(j) == 'O') uf.union(j, dummy)
+      if (board(m - 1)(j) == 'O') uf.union((m - 1) * n + j, dummy)
+    }
+    // 方向数组 d 是上下左右搜索的常用手法
+    val d = Array(Array(1, 0), Array(0, 1), Array(0, -1), Array(-1, 0))
+    for (i <- 1 until m - 1) {
+      for (j <- 1 until n - 1) {
+        if (board(i)(j) == 'O') {
+          for (k <- 0 until 4) {
+            val x = i + d(k)(0)
+            val y = j + d(k)(1)
+            if (board(x)(y) == 'O') {
+              uf.union(x * n + y, i * n + j)
+            }
+          }
+        }
+      }
+    }
+
+    // 所有不和dummy连通的O, 都要被替换
+    for (i <- 1 until m - 1) {
+      for (j <- 1 until n - 1) {
+        if (!uf.connected(dummy, i * n + j)) board(i)(j) = 'X'
+      }
+    }
+  }
 }
