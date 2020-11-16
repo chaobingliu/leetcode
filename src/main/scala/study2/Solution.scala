@@ -1,5 +1,10 @@
 package study2
 
+import java.util
+
+import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
+
 class TreeNode(_value: Int = 0, _left: TreeNode = null, _right: TreeNode = null) {
   var value: Int = _value
   var left: TreeNode = _left
@@ -36,7 +41,10 @@ object Solution {
     a.left = b
     a.right = c
     //    println(isValidBST(a))
-    println(equationsPossible(Array("a==b", "b!=a")))
+    //    println(equationsPossible(Array("a==b", "b!=a")))
+    //    println(nextGreaterElement(Array(2, 4), Array(1, 2, 3, 4)).foreach(println))
+    //    nextGreaterElements(Array(1, 2, 1)).foreach(println)
+    println(maxSlidingWindow(Array(1, 3, -1, -3, 5, 3, 6, 7), 3))
   }
 
   /*
@@ -676,4 +684,154 @@ equations[i][2] 是 '='
     return true
   }
 
+  /*
+  496. 下一个更大元素 I
+给定两个 没有重复元素 的数组 nums1 和 nums2 ，其中nums1 是 nums2 的子集。找到 nums1 中每个元素在 nums2 中的下一个比其大的值。
+
+nums1 中数字 x 的下一个更大元素是指 x 在 nums2 中对应位置的右边的第一个比 x 大的元素。如果不存在，对应位置输出 -1 。
+
+
+
+示例 1:
+
+输入: nums1 = [4,1,2], nums2 = [1,3,4,2].
+输出: [-1,3,-1]
+解释:
+    对于num1中的数字4，你无法在第二个数组中找到下一个更大的数字，因此输出 -1。
+    对于num1中的数字1，第二个数组中数字1右边的下一个较大数字是 3。
+    对于num1中的数字2，第二个数组中没有下一个更大的数字，因此输出 -1。
+示例 2:
+
+输入: nums1 = [2,4], nums2 = [1,2,3,4].
+输出: [3,-1]
+解释:
+    对于 num1 中的数字 2 ，第二个数组中的下一个较大数字是 3 。
+    对于 num1 中的数字 4 ，第二个数组中没有下一个更大的数字，因此输出 -1 。
+
+
+提示：
+
+nums1和nums2中所有元素是唯一的。
+nums1和nums2 的数组大小都不超过1000。
+   */
+  def nextGreaterElement(nums1: Array[Int], nums2: Array[Int]): Array[Int] = {
+    val res = new Array[Int](nums1.length)
+    val map = mutable.Map[Int, Int]()
+    val s = mutable.Stack[Int]()
+
+    for (i <- Range(nums2.length - 1, -1, -1)) {
+      while (!s.isEmpty && s.top <= nums2(i)) {
+        s.pop()
+      }
+      map(nums2(i)) = if (s.isEmpty) -1 else s.top
+      s.push(nums2(i))
+    }
+    for (i <- 0 until nums1.length) {
+      res(i) = map(nums1(i))
+    }
+    res
+  }
+
+  /*
+  503. 下一个更大元素 II
+给定一个循环数组（最后一个元素的下一个元素是数组的第一个元素），输出每个元素的下一个更大元素。数字 x 的下一个更大的元素是按数组遍历顺序，这个数字之后的第一个比它更大的数，这意味着你应该循环地搜索它的下一个更大的数。如果不存在，则输出 -1。
+
+示例 1:
+
+输入: [1,2,1]
+输出: [2,-1,2]
+解释: 第一个 1 的下一个更大的数是 2；
+数字 2 找不到下一个更大的数；
+第二个 1 的下一个最大的数需要循环搜索，结果也是 2。
+注意: 输入数组的长度不会超过 10000。
+   */
+  def nextGreaterElements(nums: Array[Int]): Array[Int] = {
+    val n = nums.length
+    val s = mutable.Stack[Int]()
+    val res = new Array[Int](n)
+    for (i <- Range(2 * n - 1, -1, -1)) {
+      val j = i % n
+      while (!s.isEmpty && s.top <= nums(j)) {
+        s.pop()
+      }
+      res(j) = if (s.isEmpty) -1 else s.top
+      s.push(nums(j))
+    }
+    res
+  }
+
+  /*
+  239. 滑动窗口最大值
+给定一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+
+返回滑动窗口中的最大值。
+
+
+
+进阶：
+
+你能在线性时间复杂度内解决此题吗？
+
+
+
+示例:
+
+输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+输出: [3,3,5,5,6,7]
+解释:
+
+  滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+
+
+提示：
+
+1 <= nums.length <= 10^5
+-10^4 <= nums[i] <= 10^4
+1 <= k <= nums.length
+   */
+  def maxSlidingWindow(nums: Array[Int], k: Int): Array[Int] = {
+    val window = new MonotonicQueue()
+    val res = ListBuffer[Int]()
+
+    for (i <- 0 until nums.length) {
+      if (i < k - 1) {
+        window.push(nums(i))
+      } else {
+        window.push(nums(i))
+        res.append(window.max)
+        window.pop(nums(i - k + 1))
+      }
+    }
+    res.toArray
+  }
+
+  class MonotonicQueue {
+    val q = new util.LinkedList[Int]()
+
+    def push(n: Int): Unit = {
+      while (!q.isEmpty && q.getLast < n) {
+        q.pollLast()
+      }
+      q.addLast(n)
+    }
+
+    def max(): Int = {
+      q.getFirst
+    }
+
+    def pop(n: Int): Unit = {
+      if (n == q.getFirst) {
+        q.pollFirst()
+      }
+    }
+  }
+
 }
+
