@@ -29,8 +29,8 @@ findMedian() -> 2
 如果数据流中 99% 的整数都在 0 到 100 范围内，你将如何优化你的算法？
  */
 class MedianFinder {
-  val small = mutable.PriorityQueue[Int]()(Ordering.Int.reverse)
-  val large = mutable.PriorityQueue[Int]()(Ordering.Int)
+  val small = mutable.PriorityQueue[Int]()(Ordering.Int)
+  val large = mutable.PriorityQueue[Int]()(Ordering.Int.reverse)
 
   def addNum(num: Int) {
     if (large.size <= small.size) {
@@ -57,10 +57,11 @@ class MedianFinder {
 object TTT {
   def main(args: Array[String]): Unit = {
     val t = new MedianFinder()
-    t.addNum(1)
     t.addNum((2))
-    println(t.findMedian())
+    t.addNum(1)
+    t.addNum(4)
     t.addNum(3)
+    t.addNum(2)
     println(t.findMedian())
   }
 }
