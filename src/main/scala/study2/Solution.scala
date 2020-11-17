@@ -31,9 +31,9 @@ object Solution {
     val n4 = new ListNode(4)
     val n5 = new ListNode(5)
     n1.next = n2
-    n2.next = n3
-    n3.next = n4
-    n4.next = n5
+    //    n2.next = n3
+    //    n3.next = n4
+    //    n4.next = n5
     //    reverseKGroup(n1, 2)
     val a = new TreeNode(2)
     val b = new TreeNode(1)
@@ -44,7 +44,10 @@ object Solution {
     //    println(equationsPossible(Array("a==b", "b!=a")))
     //    println(nextGreaterElement(Array(2, 4), Array(1, 2, 3, 4)).foreach(println))
     //    nextGreaterElements(Array(1, 2, 1)).foreach(println)
-    println(maxSlidingWindow(Array(1, 3, -1, -3, 5, 3, 6, 7), 3))
+    //    println(maxSlidingWindow(Array(1, 3, -1, -3, 5, 3, 6, 7), 3))
+    //    println(hasCycle(n1))
+    //    println(removeNthFromEnd(n3, 1))
+    println(twoSum(Array(2, 7, 11, 15), 9))
   }
 
   /*
@@ -964,6 +967,213 @@ piles.length <= H <= 10^9
     }
     left
   }
+
+  /*
+  141. 环形链表
+给定一个链表，判断链表中是否有环。
+
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
+
+如果链表中存在环，则返回 true 。 否则，返回 false 。
+
+
+
+进阶：
+
+你能用 O(1)（即，常量）内存解决此问题吗？
+
+
+
+示例 1：
+
+
+
+输入：head = [3,2,0,-4], pos = 1
+输出：true
+解释：链表中有一个环，其尾部连接到第二个节点。
+示例 2：
+
+
+
+输入：head = [1,2], pos = 0
+输出：true
+解释：链表中有一个环，其尾部连接到第一个节点。
+示例 3：
+
+
+
+输入：head = [1], pos = -1
+输出：false
+解释：链表中没有环。
+
+
+提示：
+
+链表中节点的数目范围是 [0, 104]
+-105 <= Node.val <= 105
+pos 为 -1 或者链表中的一个 有效索引 。
+   */
+  def hasCycle(head: ListNode): Boolean = {
+    var slow, fast = head
+    while (fast != null && fast.next != null) {
+      slow = slow.next
+      fast = fast.next.next
+      if (slow == fast) return true
+    }
+    false
+  }
+
+  /*
+  142. 环形链表 II
+给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
+
+为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意，pos 仅仅是用于标识环的情况，并不会作为参数传递到函数中。
+
+说明：不允许修改给定的链表。
+
+进阶：
+
+你是否可以使用 O(1) 空间解决此题？
+
+
+示例 1：
+
+
+
+输入：head = [3,2,0,-4], pos = 1
+输出：返回索引为 1 的链表节点
+解释：链表中有一个环，其尾部连接到第二个节点。
+示例 2：
+
+
+
+输入：head = [1,2], pos = 0
+输出：返回索引为 0 的链表节点
+解释：链表中有一个环，其尾部连接到第一个节点。
+示例 3：
+
+
+
+输入：head = [1], pos = -1
+输出：返回 null
+解释：链表中没有环。
+   */
+  def detectCycle(head: ListNode): ListNode = {
+    var slow, fast = head
+    while (fast != null && fast.next != null) {
+      fast = fast.next.next
+      slow = slow.next
+      if (fast == slow) {
+        slow = head
+        while (slow != fast) {
+          slow = slow.next
+          fast = fast.next
+        }
+        return slow
+      }
+    }
+    null
+  }
+
+  /*
+  876. 链表的中间结点
+给定一个头结点为 head 的非空单链表，返回链表的中间结点。
+
+如果有两个中间结点，则返回第二个中间结点。
+
+
+
+示例 1：
+
+输入：[1,2,3,4,5]
+输出：此列表中的结点 3 (序列化形式：[3,4,5])
+返回的结点值为 3 。 (测评系统对该结点序列化表述是 [3,4,5])。
+注意，我们返回了一个 ListNode 类型的对象 ans，这样：
+ans.val = 3, ans.next.val = 4, ans.next.next.val = 5, 以及 ans.next.next.next = NULL.
+示例 2：
+
+输入：[1,2,3,4,5,6]
+输出：此列表中的结点 4 (序列化形式：[4,5,6])
+由于该列表有两个中间结点，值分别为 3 和 4，我们返回第二个结点。
+
+
+提示：
+
+给定链表的结点数介于 1 和 100 之间。
+   */
+  def middleNode(head: ListNode): ListNode = {
+    var slow, fast = head
+    while (fast != null && fast.next != null) {
+      fast = fast.next.next
+      slow = slow.next
+    }
+    slow
+
+  }
+
+  /*
+  19. 删除链表的倒数第N个节点
+给定一个链表，删除链表的倒数第 n 个节点，并且返回链表的头结点。
+
+示例：
+
+给定一个链表: 1->2->3->4->5, 和 n = 2.
+
+当删除了倒数第二个节点后，链表变为 1->2->3->5.
+说明：
+
+给定的 n 保证是有效的。
+
+进阶：
+
+你能尝试使用一趟扫描实现吗？
+   */
+  def removeNthFromEnd(head: ListNode, n: Int): ListNode = {
+    var slow, fast = head
+    for (i <- 1 to n) {
+      fast = fast.next
+    }
+    if (fast == null) return head.next
+    while (fast.next != null) {
+      fast = fast.next
+      slow = slow.next
+    }
+    slow.next = slow.next.next
+    head
+  }
+
+  /*
+  167. 两数之和 II - 输入有序数组
+给定一个已按照升序排列 的有序数组，找到两个数使得它们相加之和等于目标数。
+
+函数应该返回这两个下标值 index1 和 index2，其中 index1 必须小于 index2。
+
+说明:
+
+返回的下标值（index1 和 index2）不是从零开始的。
+你可以假设每个输入只对应唯一的答案，而且你不可以重复使用相同的元素。
+示例:
+
+输入: numbers = [2, 7, 11, 15], target = 9
+输出: [1,2]
+解释: 2 与 7 之和等于目标数 9 。因此 index1 = 1, index2 = 2 。
+   */
+  def twoSum(numbers: Array[Int], target: Int): Array[Int] = {
+    var left = 0
+    var right = numbers.length - 1
+    while (left <= right) {
+      val temp = numbers(left) + numbers(right)
+      if (temp < target) {
+        left += 1
+      } else if (temp > target) {
+        right -= 1
+      } else {
+        return Array(left + 1, right + 1)
+      }
+    }
+    Array(-1, -1)
+  }
+
 
 }
 
