@@ -4,6 +4,7 @@ import java.util
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import scala.util.control.Breaks
 
 class TreeNode(_value: Int = 0, _left: TreeNode = null, _right: TreeNode = null) {
   var value: Int = _value
@@ -1205,6 +1206,57 @@ ans.val = 3, ans.next.val = 4, ans.next.next.val = 5, 以及 ans.next.next.next 
     }
   }
 
+  /*
+  316. 去除重复字母
+给你一个字符串 s ，请你去除字符串中重复的字母，使得每个字母只出现一次。需保证 返回结果的字典序最小（要求不能打乱其他字符的相对位置）。
+
+注意：该题与 1081 https://leetcode-cn.com/problems/smallest-subsequence-of-distinct-characters 相同
+
+
+
+示例 1：
+
+输入：s = "bcabc"
+输出："abc"
+示例 2：
+
+输入：s = "cbacdcbc"
+输出："acdb"
+
+
+提示：
+
+1 <= s.length <= 104
+s 由小写英文字母组成
+   */
+  def removeDuplicateLetters(s: String): String = {
+    val count = new Array[Int](256)
+    val stk = mutable.Stack[Char]()
+    val inStack = new Array[Boolean](256)
+    for (c <- s) {
+      count(c) += 1
+    }
+    val loop = new Breaks
+    for (c <- s) {
+      count(c) -= 1
+      if (!inStack(c)) {
+        loop.breakable {
+          while (!stk.isEmpty && stk.top > c) {
+            if (count(stk.top) == 0) loop.break()
+            inStack(stk.pop()) = false
+          }
+        }
+        stk.push(c)
+        inStack(c) = true
+      }
+    }
+    val builder = new StringBuilder()
+    while (!stk.isEmpty) {
+      builder.append(stk.pop())
+    }
+    return builder.reverse.toString()
+
+  }
 
 }
 
