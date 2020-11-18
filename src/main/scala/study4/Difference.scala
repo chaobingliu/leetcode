@@ -23,4 +23,13 @@ class Difference(nums: Array[Int]) {
     }
     res
   }
+
+  def eatGrape(a: Long, b: Long, c: Long): Long = {
+    val nums = Array(a, b, c).sorted
+    val sum = nums.sum
+
+    if (nums(0) + nums(1) > nums(2)) return (sum + 2) / 3
+    if (2 * (nums(0) + nums(1)) < nums(2)) return (nums(2) + 1) / 2
+    (sum + 2) / 3
+  }
 }
