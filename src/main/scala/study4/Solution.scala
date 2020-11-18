@@ -6,7 +6,8 @@ import scala.collection.mutable.ListBuffer
 object Solution {
 
   def main(args: Array[String]): Unit = {
-    println(slidingPuzzle(Array(Array(3, 2, 4), Array(1, 5, 0))))
+    //    println(slidingPuzzle(Array(Array(3, 2, 4), Array(1, 5, 0))))
+    corpFlightBookings(Array(Array(1, 2, 10), Array(2, 3, 20), Array(2, 5, 25)), 5).foreach(println)
   }
 
   /*
@@ -110,5 +111,55 @@ board[i][j] 是一个 [0, 1, 2, 3, 4, 5] 的排列.
       }
     }
     res.toList
+  }
+
+  /*
+  560. 和为K的子数组
+给定一个整数数组和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数。
+
+示例 1 :
+
+输入:nums = [1,1,1], k = 2
+输出: 2 , [1,1] 与 [1,1] 为两种不同的情况。
+说明 :
+
+数组的长度为 [1, 20,000]。
+数组中元素的范围是 [-1000, 1000] ，且整数 k 的范围是 [-1e7, 1e7]。
+   */
+  def subarraySum(nums: Array[Int], k: Int): Int = {
+    val preSum = mutable.Map[Int, Int]()
+    preSum(0) = 1
+    var ans, sum0_i = 0
+    for (num <- nums) {
+      sum0_i += num
+      val sum0_j = sum0_i - k
+      if (preSum.contains(sum0_j)) ans += preSum(sum0_j)
+      preSum(sum0_i) = preSum.getOrElse(sum0_i, 0) + 1
+    }
+    ans
+  }
+
+  /*
+  1109. 航班预订统计
+这里有 n 个航班，它们分别从 1 到 n 进行编号。
+
+我们这儿有一份航班预订表，表中第 i 条预订记录 bookings[i] = [j, k, l] 意味着我们在从 j 到 k 的每个航班上预订了 l 个座位。
+
+请你返回一个长度为 n 的数组 answer，按航班编号顺序返回每个航班上预订的座位数。
+
+
+
+示例：
+
+输入：bookings = [[1,2,10],[2,3,20],[2,5,25]], n = 5
+输出：[10,55,45,25,25]
+   */
+  def corpFlightBookings(bookings: Array[Array[Int]], n: Int): Array[Int] = {
+    val nums = new Array[Int](n)
+    val df = new Difference(nums)
+    for (booking <- bookings) {
+      df.increment(booking(0) - 1, booking(1) - 1, booking(2))
+    }
+    df.result()
   }
 }
