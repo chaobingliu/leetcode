@@ -22,6 +22,12 @@ class ListNode(_x: Int = 0, _next: ListNode = null) {
 
 object Solution {
   def main(args: Array[String]): Unit = {
+    val arr = Array(Array('5', '3', '.', '.', '7', '.', '.', '.', '.'), Array('6', '.', '.', '1', '9', '5', '.', '.', '.'), Array('.', '9', '8', '.', '.', '.', '.', '6', '.'), Array('8', '.', '.', '.', '6', '.', '.', '.', '3'), Array('4', '.', '.', '8', '.', '3', '.', '.', '1'), Array('7', '.', '.', '.', '2', '.', '.', '.', '6'), Array('.', '6', '.', '.', '.', '.', '2', '8', '.'), Array('.', '.', '.', '4', '1', '9', '.', '.', '5'), Array('.', '.', '.', '.', '8', '.', '.', '7', '9'))
+    solveSudoku(arr)
+    for (i <- 0 until 9) {
+      arr(i).foreach(x => print(x + " "))
+      println
+    }
   }
 
   def subsets(nums: Array[Int]): List[List[Int]] = {
@@ -98,6 +104,72 @@ object Solution {
     backtrack(new ListBuffer[Int]())
     res.toList
   }
+
+  /*
+  37. 解数独
+编写一个程序，通过填充空格来解决数独问题。
+
+一个数独的解法需遵循如下规则：
+
+数字 1-9 在每一行只能出现一次。
+数字 1-9 在每一列只能出现一次。
+数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+空白格用 '.' 表示。
+
+
+
+一个数独。
+
+
+
+答案被标成红色。
+
+提示：
+
+给定的数独序列只包含数字 1-9 和字符 '.' 。
+你可以假设给定的数独只有唯一解。
+给定数独永远是 9x9 形式的。
+
+   */
+  def solveSudoku(board: Array[Array[Char]]): Unit = {
+
+    def isValid(r: Int, c: Int, n: Int): Boolean = {
+      for (i <- 0 until 9) {
+        if (board(r)(i) == n) return false
+        if (board(i)(c) == n) return false
+        if (board((r / 3) * 3 + i / 3)((c / 3) * 3 + i % 3) == n) return false
+      }
+      true
+    }
+
+    val m, n = 9
+
+    def backtrack(i: Int, j: Int): Boolean = {
+      if (j == 9) {
+        return backtrack(i + 1, 0)
+      }
+      if (i == m) return true
+
+      if (board(i)(j) != '.') {
+        return backtrack(i, j + 1)
+      }
+
+      for (ch <- '1' to '9') {
+        if (isValid(i, j, ch)) {
+          board(i)(j) = ch
+          if (backtrack(i, j + 1)) {
+            return true
+          }
+          board(i)(j) = '.'
+
+        }
+      }
+      false
+    }
+
+    backtrack(0, 0)
+  }
+
 
 }
 
