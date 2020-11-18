@@ -22,12 +22,13 @@ class ListNode(_x: Int = 0, _next: ListNode = null) {
 
 object Solution {
   def main(args: Array[String]): Unit = {
-    val arr = Array(Array('5', '3', '.', '.', '7', '.', '.', '.', '.'), Array('6', '.', '.', '1', '9', '5', '.', '.', '.'), Array('.', '9', '8', '.', '.', '.', '.', '6', '.'), Array('8', '.', '.', '.', '6', '.', '.', '.', '3'), Array('4', '.', '.', '8', '.', '3', '.', '.', '1'), Array('7', '.', '.', '.', '2', '.', '.', '.', '6'), Array('.', '6', '.', '.', '.', '.', '2', '8', '.'), Array('.', '.', '.', '4', '1', '9', '.', '.', '5'), Array('.', '.', '.', '.', '8', '.', '.', '7', '9'))
-    solveSudoku(arr)
-    for (i <- 0 until 9) {
-      arr(i).foreach(x => print(x + " "))
-      println
-    }
+    //    val arr = Array(Array('5', '3', '.', '.', '7', '.', '.', '.', '.'), Array('6', '.', '.', '1', '9', '5', '.', '.', '.'), Array('.', '9', '8', '.', '.', '.', '.', '6', '.'), Array('8', '.', '.', '.', '6', '.', '.', '.', '3'), Array('4', '.', '.', '8', '.', '3', '.', '.', '1'), Array('7', '.', '.', '.', '2', '.', '.', '.', '6'), Array('.', '6', '.', '.', '.', '.', '2', '8', '.'), Array('.', '.', '.', '4', '1', '9', '.', '.', '5'), Array('.', '.', '.', '.', '8', '.', '.', '7', '9'))
+    //    solveSudoku(arr)
+    //    for (i <- 0 until 9) {
+    //      arr(i).foreach(x => print(x + " "))
+    //      println
+    //    }
+    println(generateParenthesis(3))
   }
 
   def subsets(nums: Array[Int]): List[List[Int]] = {
@@ -168,6 +169,48 @@ object Solution {
     }
 
     backtrack(0, 0)
+  }
+
+  /*
+  22. 括号生成
+数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。
+
+
+
+示例：
+
+输入：n = 3
+输出：[
+       "((()))",
+       "(()())",
+       "(())()",
+       "()(())",
+       "()()()"
+     ]
+   */
+  def generateParenthesis(n: Int): List[String] = {
+    if (n == 0) return List()
+    val res = new ListBuffer[String]()
+
+    def backtrack(left: Int, right: Int, sb: StringBuilder): Unit = {
+      if (right < left) return
+      if (left < 0 || right < 0) return
+      if (left == 0 && right == 0) {
+        res.append(sb.toString())
+        return
+      }
+
+      sb.append("(")
+      backtrack(left - 1, right, sb)
+      sb.deleteCharAt(sb.length - 1)
+
+      sb.append(")")
+      backtrack(left, right - 1, sb)
+      sb.deleteCharAt(sb.length - 1)
+    }
+
+    backtrack(n, n, new StringBuilder())
+    res.toList
   }
 
 
