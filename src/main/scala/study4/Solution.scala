@@ -7,7 +7,16 @@ object Solution {
 
   def main(args: Array[String]): Unit = {
     //    println(slidingPuzzle(Array(Array(3, 2, 4), Array(1, 5, 0))))
-    corpFlightBookings(Array(Array(1, 2, 10), Array(2, 3, 20), Array(2, 5, 25)), 5).foreach(println)
+    //    corpFlightBookings(Array(Array(1, 2, 10), Array(2, 3, 20), Array(2, 5, 25)), 5).foreach(println)
+    //    println(pancakeSort(Array(3, 2, 4, 1)))
+    //    println('a' | ' ')
+    //    println('A' | ' ')
+    //    println('b' & '_')
+    //    println('B' & '_')
+    //    println('d' ^ ' ')
+    //    println('D' ^ ' ')
+    println(multiply("123", "45"))
+
   }
 
   /*
@@ -161,5 +170,134 @@ board[i][j] 是一个 [0, 1, 2, 3, 4, 5] 的排列.
       df.increment(booking(0) - 1, booking(1) - 1, booking(2))
     }
     df.result()
+  }
+
+  def pancakeSort(cakes: Array[Int]): List[Int] = {
+    val res = new ListBuffer[Int]()
+
+    def sort(n: Int): Unit = {
+      if (n == 1) return
+
+      var maxCake, maxCakeIndex = 0
+      for (i <- 0 until n) {
+        if (cakes(i) > cakes(maxCakeIndex)) {
+          maxCake = cakes(i)
+          maxCakeIndex = i
+        }
+      }
+
+      // 第一次翻转，将最大饼翻到最上面
+      reverse(0, maxCakeIndex)
+      res.append(maxCakeIndex + 1)
+      // 第二次翻转，将最大饼翻到最下面
+      reverse(0, n - 1)
+      res.append(n)
+
+      // 递归调用
+      sort(n - 1)
+    }
+
+    def reverse(_i: Int, _j: Int): Unit = {
+      var i = _i
+      var j = _j
+      while (i < j) {
+        val temp = cakes(i)
+        cakes(i) = cakes(j)
+        cakes(j) = temp
+        i += 1
+        j -= 1
+      }
+    }
+
+    sort(cakes.length)
+    res.toList
+  }
+
+  /*
+  191. 位1的个数
+编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 '1' 的个数（也被称为汉明重量）。
+
+
+
+提示：
+
+请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。
+在 Java 中，编译器使用二进制补码记法来表示有符号整数。因此，在上面的 示例 3 中，输入表示有符号整数 -3。
+
+
+进阶：
+
+如果多次调用这个函数，你将如何优化你的算法？
+
+
+示例 1：
+
+输入：00000000000000000000000000001011
+输出：3
+解释：输入的二进制串 00000000000000000000000000001011 中，共有三位为 '1'。
+示例 2：
+
+输入：00000000000000000000000010000000
+输出：1
+解释：输入的二进制串 00000000000000000000000010000000 中，共有一位为 '1'。
+示例 3：
+
+输入：11111111111111111111111111111101
+输出：31
+解释：输入的二进制串 11111111111111111111111111111101 中，共有 31 位为 '1'。
+
+
+提示：
+
+输入必须是长度为 32 的 二进制串 。
+   */
+  def hammingWeight(_n: Int): Int = {
+    var n = _n
+    var res = 0
+    while (n != 0) {
+      n &= (n - 1)
+      res += 1
+    }
+    res
+  }
+
+  /*
+  43. 字符串相乘
+给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。
+
+示例 1:
+
+输入: num1 = "2", num2 = "3"
+输出: "6"
+示例 2:
+
+输入: num1 = "123", num2 = "456"
+输出: "56088"
+说明：
+
+num1 和 num2 的长度小于110。
+num1 和 num2 只包含数字 0-9。
+num1 和 num2 均不以零开头，除非是数字 0 本身。
+不能使用任何标准库的大数类型（比如 BigInteger）或直接将输入转换为整数来处理。
+   */
+  def multiply(num1: String, num2: String): String = {
+    val m = num1.length
+    val n = num2.length
+
+    val res = new Array[Int](m + n)
+
+    for (i <- Range(m - 1, -1, -1)) {
+      for (j <- Range(n - 1, -1, -1)) {
+        val mul = (num1(i) - '0') * (num2(j) - '0')
+        val p1 = i + j
+        val p2 = i + j + 1
+        val sum = mul + res(p2)
+        res(p2) = sum % 10
+        res(p1) += sum / 10
+      }
+    }
+    var i = 0
+    while (i < m + n && res(i) == 0) i += 1
+    if (i == m + n) "0" else res.slice(i, m + n).mkString
   }
 }
